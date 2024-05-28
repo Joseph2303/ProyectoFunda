@@ -24,39 +24,30 @@
         <nav class="navegacion">
             <ul>
                 <li>
-                    <a href="#">
-                        <ion-icon name="star-outline"></ion-icon>
-                        <span>Starred</span>
+                    <a id="citas" href="#">
+                        <ion-icon name="checkbox-outline"></ion-icon>
+                        <span>Citas</span>
                     </a>
                 </li>
                 <li>
-                    <a href="#">
-                        <ion-icon name="paper-plane-outline"></ion-icon>
-                        <span>Sent</span>
+                    <a id="CitasDoctor" href="#">
+                        <ion-icon name="id-card-outline"></ion-icon>
+                        <span>Citas de Doctores</span>
                     </a>
                 </li>
                 <li>
-                    <a href="#">
-                        <ion-icon name="document-text-outline"></ion-icon>
-                        <span>Drafts</span>
+                    <a id="CitasDoctor" href="#">
+                        <ion-icon name="people-outline"></ion-icon>
+                        <span>Citas de Pacientes</span>
                     </a>
                 </li>
+                <br>
+                <br>
+                <br>
                 <li>
-                    <a href="#">
-                        <ion-icon name="bookmark-outline"></ion-icon>
-                        <span>Important</span>
-                    </a>
-                </li>
-                <li>
-                    <a href="#">
-                        <ion-icon name="alert-circle-outline"></ion-icon>
-                        <span>Spam</span>
-                    </a>
-                </li>
-                <li>
-                    <a href="#">
-                        <ion-icon name="trash-outline"></ion-icon>
-                        <span>Trash</span>
+                    <a id="CitasDoctor" href="#">
+                        <ion-icon name="walk-outline"></ion-icon>
+                        <span>Cerrar Sesión</span>
                     </a>
                 </li>
             </ul>
@@ -82,56 +73,15 @@
 
     </div>
 
-    <main>
+    <main id="main-containerEncargado">
         
     </main>
 
 
     <script type="module" src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.esm.js"></script>
     <script nomodule src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.js"></script>
-    <script>
-        const cloud = document.getElementById("cloud");
-        const barraLateral = document.querySelector(".barra-lateral");
-        const spans = document.querySelectorAll("span");
-        const palanca = document.querySelector(".switch");
-        const circulo = document.querySelector(".circulo");
-        const menu = document.querySelector(".menu");
-        const main = document.querySelector("main");
-        
-        menu.addEventListener("click",()=>{
-            barraLateral.classList.toggle("max-barra-lateral");
-            if(barraLateral.classList.contains("max-barra-lateral")){
-                menu.children[0].style.display = "none";
-                menu.children[1].style.display = "block";
-            }
-            else{
-                menu.children[0].style.display = "block";
-                menu.children[1].style.display = "none";
-            }
-            if(window.innerWidth<=320){
-                barraLateral.classList.add("mini-barra-lateral");
-                main.classList.add("min-main");
-                spans.forEach((span)=>{
-                    span.classList.add("oculto");
-                })
-            }
-        });
-        
-        palanca.addEventListener("click",()=>{
-            let body = document.body;
-            body.classList.toggle("dark-mode");
-            body.classList.toggle("");
-            circulo.classList.toggle("prendid");
-        });
-        
-        cloud.addEventListener("click",()=>{
-            barraLateral.classList.toggle("mini-barra-lateral");
-            main.classList.toggle("min-main");
-            spans.forEach((span)=>{
-                span.classList.toggle("oculto");
-            });
-        });
-        
-        </script>
+    <script src="/ProyectoFundamentos/views/Admin/main.js"></script>
+    <script src="/ProyectoFundamentos/js/jquery.js"></script>
+    <script src="/ProyectoFundamentos/js/router.js"></script>
 </body>
 </html>

@@ -1,0 +1,210 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+
+    <style>
+.container {
+    max-width: 800px;
+    margin: 50px auto;
+    padding: 20px;
+    background-color: white;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    border-radius: 10px;
+}
+
+h1, h2 {
+    text-align: center;
+}
+
+form {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+form div {
+    display: flex;
+    flex-direction: column;
+}
+
+form label {
+    margin-bottom: 5px;
+}
+
+form input {
+    padding: 8px;
+    font-size: 16px;
+}
+
+button {
+    padding: 10px;
+    font-size: 16px;
+    background-color: #0b438d;
+    color: white;
+    border: none;
+    cursor: pointer;
+    border-radius: 10px;
+}
+
+button:hover {
+    background-color: #3c5d88;
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 20px;
+}
+
+table, th, td {
+    border: 1px solid #ddd;
+}
+
+th, td {
+    padding: 8px;
+    text-align: left;
+}
+
+th {
+    background-color: #f2f2f2;
+}
+
+.actions {
+    display: flex;
+    gap: 10px;
+}
+
+.actions button {
+    padding: 5px 10px;
+    font-size: 14px;
+    cursor: pointer;
+}
+
+.actions .edit {
+    background-color: #0275d8;
+    color: white;
+}
+
+.actions .delete {
+    background-color: #d9534f;
+    color: white;
+}
+
+    </style>
+
+</head>
+<body>
+    <center>
+        <h1 style="color: rgb(255, 255, 255);">Gestión de Citas de Hospital</h1>
+    </center>
+
+    <di class="Cajon">
+        <div class="container">
+            <h1></h1>
+    
+            <form id="appointmentForm">
+                <div>
+                    <label for="patientName">Nombre de la Cita:</label>
+                    <input type="text" id="patientName" name="patientName" required>
+                </div>
+                <div>
+                    <label for="appointmentDate">Fecha de la Cita:</label>
+                    <input type="date" id="appointmentDate" name="appointmentDate" required>
+                </div>
+                <div>
+                    <label for="appointmentTime">Hora de la Cita:</label>
+                    <input type="time" id="appointmentTime" name="appointmentTime" required>
+                </div>
+                <div>
+                    <label for="doctorName">Nombre del Doctor:</label>
+                    <input type="text" id="doctorName" name="doctorName" required>
+                </div>
+                <button herf="#" id="submit" >Agregar Cita</button>
+            </form>
+    
+            <h2>Lista de Citas</h2>
+            <table id="appointmentsTable">
+                <thead>
+                    <tr>
+                        <th>Cita</th>
+                        <th>Fecha</th>
+                        <th>Hora</th>
+                        <th>Doctor</th>
+                        <th>Acciones</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <!-- Las citas se agregarán aquí -->
+                </tbody>
+            </table>
+        </div>
+    </di>
+
+    <script>
+       document.addEventListener('DOMContentLoaded', () => {
+    const appointmentForm = document.getElementById('appointmentForm');
+    const appointmentsTableBody = document.getElementById('appointmentsTable').getElementsByTagName('tbody')[0];
+
+    let appointments = [];
+
+    appointmentForm.addEventListener('submit', function(event) {
+        event.preventDefault();
+        
+        const appointment = {
+            id: Date.now(),
+            patientName: event.target.patientName.value,
+            appointmentDate: event.target.appointmentDate.value,
+            appointmentTime: event.target.appointmentTime.value,
+            doctorName: event.target.doctorName.value
+        };
+
+        appointments.push(appointment);
+        event.target.reset();
+        renderAppointments();
+    });
+
+    function renderAppointments() {
+        appointmentsTableBody.innerHTML = '';
+
+        appointments.forEach(appointment => {
+            const row = document.createElement('tr');
+
+            row.innerHTML = `
+                <td>${appointment.patientName}</td>
+                <td>${appointment.appointmentDate}</td>
+                <td>${appointment.appointmentTime}</td>
+                <td>${appointment.doctorName}</td>
+                <td class="actions">
+                    <button class="edit" onclick="editAppointment(${appointment.id})">Editar</button>
+                    <button class="delete" onclick="deleteAppointment(${appointment.id})">Eliminar</button>
+                </td>
+            `;
+
+            appointmentsTableBody.appendChild(row);
+        });
+    }
+
+    window.editAppointment = function(id) {
+        const appointment = appointments.find(appt => appt.id === id);
+        if (appointment) {
+            document.getElementById('patientName').value = appointment.patientName;
+            document.getElementById('appointmentDate').value = appointment.appointmentDate;
+            document.getElementById('appointmentTime').value = appointment.appointmentTime;
+            document.getElementById('doctorName').value = appointment.doctorName;
+
+            deleteAppointment(id);
+        }
+    };
+
+    window.deleteAppointment = function(id) {
+        appointments = appointments.filter(appt => appt.id !== id);
+        renderAppointments();
+    };
+});
+
+    </script>
+</body>
+</html>
