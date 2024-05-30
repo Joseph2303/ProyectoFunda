@@ -1,0 +1,210 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gestión de Pacientes</title>
+    <style>
+        .container {
+            max-width: 800px;
+            margin: 50px auto;
+            padding: 20px;
+            background-color: white;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            border-radius: 10px;
+        }
+        
+        h1, h2 {
+            text-align: center;
+        }
+        
+        form {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+        
+        form div {
+            display: flex;
+            flex-direction: column;
+        }
+        
+        form label {
+            margin-bottom: 5px;
+        }
+        
+        form input {
+            padding: 8px;
+            font-size: 16px;
+        }
+        
+        button {
+            padding: 10px;
+            font-size: 16px;
+            background-color: #0b438d;
+            color: white;
+            border: none;
+            cursor: pointer;
+            border-radius: 10px;
+        }
+        
+        button:hover {
+            background-color: #3c5d88;
+        }
+        
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+        
+        table, th, td {
+            border: 1px solid #ddd;
+        }
+        
+        th, td {
+            padding: 8px;
+            text-align: left;
+        }
+        
+        th {
+            background-color: #f2f2f2;
+        }
+        
+        .actions {
+            display: flex;
+            gap: 10px;
+        }
+        
+        .actions button {
+            padding: 5px 10px;
+            font-size: 14px;
+            cursor: pointer;
+        }
+        
+        .actions .edit {
+            background-color: #0275d8;
+            color: white;
+        }
+        
+        .actions .delete {
+            background-color: #d9534f;
+            color: white;
+        }
+    </style>
+</head>
+<body>
+    <center>
+        <h1 style="color: rgb(255, 255, 255);">Gestión de Pacientes</h1>
+    </center>
+    <div class="container">
+        <form id="patientForm">
+            <div>
+                <label for="patientName">Nombre del Paciente:</label>
+                <input type="text" id="patientName" name="patientName" required>
+            </div>
+            <div>
+                <label for="patientName">Apellidos del Paciente:</label>
+                <input type="text" id="patientName" name="patientName" required>
+            </div>
+            <div>
+                <label for="patientAge">Edad del Paciente:</label>
+                <input type="number" id="patientAge" name="patientAge" required>
+            </div>
+            <div>
+                <label for="patientGender">Género del Paciente:</label>
+                <select id="patientGender" name="patientGender" required>
+                    <option value="Masculino">Masculino</option>
+                    <option value="Femenino">Femenino</option>
+                    <option value="Otro">Otro</option>
+                </select>
+            </div>
+            <div>
+                <label for="patientContact">Contacto del Paciente:</label>
+                <input type="text" id="patientContact" name="patientContact" required>
+            </div>
+            <button type="submit">Agregar Paciente</button>
+        </form>
+
+        <h2>Lista de Pacientes</h2>
+        <table id="patientsTable">
+            <thead>
+                <tr>
+                    <th>Nombre</th>
+                    <th>Edad</th>
+                    <th>Género</th>
+                    <th>Contacto</th>
+                    <th>Acciones</th>
+                </tr>
+            </thead>
+            <tbody>
+                <!-- Los pacientes se agregarán aquí -->
+            </tbody>
+        </table>
+    </div>
+    
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+    const patientForm = document.getElementById('patientForm');
+    const patientsTableBody = document.getElementById('patientsTable').getElementsByTagName('tbody')[0];
+
+    let patients = [];
+
+    patientForm.addEventListener('submit', (event) => {
+        event.preventDefault();
+        
+        const patient = {
+            id: Date.now(),
+            patientName: event.target.patientName.value,
+            patientAge: event.target.patientAge.value,
+            patientGender: event.target.patientGender.value,
+            patientContact: event.target.patientContact.value
+        };
+
+        patients.push(patient);
+        event.target.reset();
+        renderPatients();
+    });
+
+    function renderPatients() {
+        patientsTableBody.innerHTML = '';
+
+        patients.forEach(patient => {
+            const row = document.createElement('tr');
+
+            row.innerHTML = `
+                <td>${patient.patientName}</td>
+                <td>${patient.patientAge}</td>
+                <td>${patient.patientGender}</td>
+                <td>${patient.patientContact}</td>
+                <td class="actions">
+                    <button class="edit" onclick="editPatient(${patient.id})">Editar</button>
+                    <button class="delete" onclick="deletePatient(${patient.id})">Eliminar</button>
+                </td>
+            `;
+
+            patientsTableBody.appendChild(row);
+        });
+    }
+
+    window.editPatient = function(id) {
+        const patient = patients.find(pat => pat.id === id);
+        if (patient) {
+            document.getElementById('patientName').value = patient.patientName;
+            document.getElementById('patientAge').value = patient.patientAge;
+            document.getElementById('patientGender').value = patient.patientGender;
+            document.getElementById('patientContact').value = patient.patientContact;
+
+            deletePatient(id);
+        }
+    };
+
+    window.deletePatient = function(id) {
+        patients = patients.filter(pat => pat.id !== id);
+        renderPatients();
+    };
+});
+
+    </script>
+</body>
+</html>

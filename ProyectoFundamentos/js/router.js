@@ -6,3 +6,5 @@ function routingi(router){
 
 $("#citas").on('click',function(){routingi("citas")});
 $("#CitasDoctor").on('click',function(){routingi("CitasDoctor")}); 
+$("#citaspaciente").on('click',function(){routingi("citaspaciente")});
+$("#paciente").on('click',function(){routingi("paciente")});
