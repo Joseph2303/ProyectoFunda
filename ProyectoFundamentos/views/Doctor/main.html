@@ -1,11 +1,121 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
+    <title>Perfil de Doctor</title>
+    <link rel="stylesheet" href="/ProyectoFundamentos/views/Doctor/doctorMain.css">
+    <link rel="icon" type="image/x-icon" href="/ProyectoFundamentos/Assets/icon/doctor.png">
+    <script src="https://cdn.lordicon.com/lordicon.js"></script>
 </head>
+
 <body>
-    
+
+    <lord-icon class="P" herf="#" src="https://cdn.lordicon.com/gwvmctbb.json" trigger="hover">Cerrar Sesión
+    </lord-icon>
+    <br>
+    <br>
+    <div class="container">
+        <center>
+            <h1 style="color: rgb(255, 255, 255);">Perfil de Doctor</h1>
+        </center>
+        <div class="container1">
+            <h2 style=" color: rgb(0, 0, 0);">Lista de Citas</h2>
+            <table id="appointmentsTable">
+                <thead>
+                    <tr>
+                        <th>Paciente</th>
+                        <th>Fecha</th>
+                        <th>Hora</th>
+                        <th>Acciones</th>
+                    </tr>
+                </thead>
+                <tbody>
+
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const appointmentsTableBody = document.getElementById('appointmentsTable').getElementsByTagName('tbody')[0];
+
+            // Ejemplo de citas predefinidas
+            let appointments = [
+                {
+                    id: 1,
+                    patientName: "Juan Perez",
+                    appointmentDate: "2024-06-10",
+                    appointmentTime: "10:00",
+                },
+                {
+                    id: 2,
+                    patientName: "Maria Lopez",
+                    appointmentDate: "2024-06-11",
+                    appointmentTime: "14:00",
+                }
+            ];
+
+            function renderAppointments() {
+                appointmentsTableBody.innerHTML = '';
+
+                appointments.forEach(appointment => {
+                    const row = document.createElement('tr');
+
+                    row.innerHTML = `
+                        <td>${appointment.patientName}</td>
+                        <td>${appointment.appointmentDate}</td>
+                        <td>${appointment.appointmentTime}</td>
+                        <td class="actions">
+                            <button class="accept" onclick="acceptAppointment(${appointment.id})">Aceptar</button>
+                            <button class="reject" onclick="rejectAppointment(${appointment.id})">Rechazar</button>
+                        </td>
+                    `;
+
+                    appointmentsTableBody.appendChild(row);
+                });
+            }
+
+            window.acceptAppointment = function (id) {
+                const appointmentIndex = appointments.findIndex(appt => appt.id === id);
+                if (appointmentIndex !== -1) {
+                    alert(`Cita con ${appointments[appointmentIndex].patientName} aceptada.`);
+                    appointments.splice(appointmentIndex, 1);
+                    renderAppointments();
+                }
+            };
+
+            window.rejectAppointment = function (id) {
+                const appointmentIndex = appointments.findIndex(appt => appt.id === id);
+                if (appointmentIndex !== -1) {
+                    alert(`Cita con ${appointments[appointmentIndex].patientName} rechazada.`);
+                    appointments.splice(appointmentIndex, 1);
+                    renderAppointments();
+                }
+            };
+
+            renderAppointments();
+            window.rejectAppointment = function (id) {
+                const appointmentIndex = appointments.findIndex(appt => appt.id === id);
+                if (appointmentIndex !== -1) {
+                    const reason = prompt(`Por favor, ingrese el motivo de rechazo para la cita con ${appointments[appointmentIndex].patientName}:`);
+                    if (reason !== null && reason !== '') { // Comprueba si se ingresó un motivo válido
+                        alert(`Cita con ${appointments[appointmentIndex].patientName} rechazada debido a: ${reason}`);
+                        appointments.splice(appointmentIndex, 1);
+                        renderAppointments();
+                    } else {
+                        alert("Debe ingresar un motivo válido para rechazar la cita.");
+                    }
+                }
+            };
+
+        });
+
+
+    </script>
+
 </body>
+
 </html>
