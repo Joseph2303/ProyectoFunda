@@ -11,26 +11,31 @@ self.addEventListener('install',event=>{
         .then(cache=>{
             return cache.addAll([
                 '/',
-                '/views/Admin/main.html',
-                '/views/Admin/citasDoctor.html',
-                '/views/Admin/citasPaciente.html',
-                '/views/Admin/citas.html',
-                '/views/Admin/paciente.html',
-                '/views/Doctor/main.html',
-                '/views/Login/login.html',
-                '/views/Paciente/main.html',
+                '/ProyectoFundamentos/views/Admin/main.html',
+                '/ProyectoFundamentos/views/Admin/citasDoctor.html',
+                '/ProyectoFundamentos/views/Admin/citasPaciente.html',
+                '/ProyectoFundamentos/views/Admin/citas.html',
+                '/ProyectoFundamentos/views/Admin/paciente.html',
+                '/ProyectoFundamentos/views/Doctor/main.html',
+                '/ProyectoFundamentos/views/Login/login.html',
+                '/ProyectoFundamentos/views/Paciente/main.html',
 
-                '/views/Login/login.css',
-                '/views/Admin/Style/main.css',
+                '/ProyectoFundamentos/views/Login/login.css',
+                '/ProyectoFundamentos/views/Admin/Style/main.css',
 
-                '/Assets/img/origin.jpg',
-                '/Assets/img/maxresdefault.jpg',
-                '/Assets/icon/doctor.png',
-                '/Assets/icon/download.png',
-                '/Assets/icon/icegif.gif',
+                '/ProyectoFundamentos/Assets/img/origin.jpg',
+                '/ProyectoFundamentos/Assets/img/maxresdefault.jpg',
+                '/ProyectoFundamentos/Assets/icon/doctor.png',
+                '/ProyectoFundamentos/Assets/icon/download.png',
+                '/ProyectoFundamentos/Assets/icon/icegif.gif',
 
-                '/views/Admin/main.js',
-                '/js/app.js'
+                '/ProyectoFundamentos/Scripts/Admin/main.js',
+                '/ProyectoFundamentos/Scripts/Doctor/main.js',
+                '/ProyectoFundamentos/Scripts/Login/main.js',
+                '/ProyectoFundamentos/Scripts/Paciente/main.js',
+
+                '/ProyectoFundamentos/views/Admin/main.js',
+                '/ProyectoFundamentos/js/app.js'
             ]);
         });
     const cacheInmutableProm=caches.open(CACHE_INMUTABLE_NAME)
