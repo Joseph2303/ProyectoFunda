@@ -1,10 +1,10 @@
 const Authorization="Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJhQXN4ZXFzZXJmc2QiLCJlbWFpbCI6ImVkZGllckB1bmEuY3IiLCJuYW1lIjoiRWRkaWVyIiwiaWF0IjoxNzE3NjMwNTc4fQ.m_G6IiX7knD9hppJ5yVpP8KN6ggMoKY4_s3hnmL4CFU";
 const urlAPI="http://localhost:9000/graphql"
 
-const createPatient=async (name,deadline,capture)=>{
+const createDoctor=async (name,deadline,capture)=>{
     const query=`
-        mutation($input: NewPatientInput!) {
-            createPatient(input: $input) {
+        mutation($input: NewDoctorInput!) {
+            createDoctor(input: $input) {
             id
             name
             deadline
@@ -20,10 +20,10 @@ const createPatient=async (name,deadline,capture)=>{
     return await fetchAPI(query,input);
 }
 
-const getPatients = async () => {
+const getDoctors = async () => {
     const query = `
         query{
-            tasks {
+            doctors {
                 items {                    
                     deadline
                     id
@@ -35,10 +35,10 @@ const getPatients = async () => {
     return await fetchAPI(query, {});
 };
 
-const updatePatient = async (id, name, deadline, capture) => {
+const updateDoctor = async (id, name, deadline, capture) => {
     const query = `
-        mutation($input: UpdatePatientInput!) {
-            updatePatient(input: $input) {
+        mutation($input: UpdateDoctorInput!) {
+            updateDoctor(input: $input) {
                 id
                 name
                 deadline
@@ -52,10 +52,10 @@ const updatePatient = async (id, name, deadline, capture) => {
     return await fetchAPI(query, variables);
 };
 
-const deletePatient = async (id) => {
+const deleteDoctor = async (id) => {
     const query = `
         mutation($id: ID!) {
-            deletePatient(id: $id) {
+            deleteDoctor(id: $id) {
                 id
             }
         }
