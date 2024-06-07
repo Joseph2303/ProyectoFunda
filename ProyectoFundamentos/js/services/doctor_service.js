@@ -1,23 +1,31 @@
-const Authorization="Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJhQXN4ZXFzZXJmc2QiLCJlbWFpbCI6ImVkZGllckB1bmEuY3IiLCJuYW1lIjoiRWRkaWVyIiwiaWF0IjoxNzE3NjMwNTc4fQ.m_G6IiX7knD9hppJ5yVpP8KN6ggMoKY4_s3hnmL4CFU";
-const urlAPI="http://localhost:9000/graphql"
+const Authorization = "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJhQXN4ZXFzZXJmc2QiLCJlbWFpbCI6ImVkZGllckB1bmEuY3IiLCJuYW1lIjoiRWRkaWVyIiwiaWF0IjoxNzE3NjMwNTc4fQ.m_G6IiX7knD9hppJ5yVpP8KN6ggMoKY4_s3hnmL4CFU";
+const urlAPI = "http://localhost:9000/graphql"
 
-const createDoctor=async (name,deadline,capture)=>{
-    const query=`
+const createDoctor = async (nombre, apellidos, edad, genero, contacto, role, capture) => {
+    const query = `
         mutation($input: NewDoctorInput!) {
             createDoctor(input: $input) {
-            id
-            name
-            deadline
-            created_at
+                id
+                nombre 
+                apellidos 
+                edad 
+                genero 
+                contacto
+                role
+                created_at
             }
         }      
     `;
-    const input={
-        name,
-        deadline,
+    const input = {
+        nombre,
+        apellidos,
+        edad,
+        genero,
+        contacto,
+        role,
         capture
     };
-    return await fetchAPI(query,input);
+    return await fetchAPI(query, input);
 }
 
 const getDoctors = async () => {
@@ -25,9 +33,14 @@ const getDoctors = async () => {
         query{
             doctors {
                 items {                    
-                    deadline
                     id
-                    name                    
+                    nombre 
+                    apellidos 
+                    edad 
+                    genero 
+                    contacto
+                    role
+                    created_at                  
                 }
             }
         }
@@ -35,19 +48,23 @@ const getDoctors = async () => {
     return await fetchAPI(query, {});
 };
 
-const updateDoctor = async (id, name, deadline, capture) => {
+const updateDoctor = async (id, nombre, apellidos, edad, genero, contacto, role,capture) => {
     const query = `
         mutation($input: UpdateDoctorInput!) {
             updateDoctor(input: $input) {
                 id
-                name
-                deadline
+                nombre 
+                apellidos 
+                edad 
+                genero 
+                contacto
+                role
                 updated_at
             }
         }
     `;
     const variables = {
-        input: { id, name, deadline, capture }
+        input: { id, nombre, apellidos, edad, genero, contacto, role,capture }
     };
     return await fetchAPI(query, variables);
 };

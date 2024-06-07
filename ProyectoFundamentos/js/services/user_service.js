@@ -1,28 +1,20 @@
 const Authorization = "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJhQXN4ZXFzZXJmc2QiLCJlbWFpbCI6ImVkZGllckB1bmEuY3IiLCJuYW1lIjoiRWRkaWVyIiwiaWF0IjoxNzE3NjMwNTc4fQ.m_G6IiX7knD9hppJ5yVpP8KN6ggMoKY4_s3hnmL4CFU";
 const urlAPI = "http://localhost:9000/graphql"
 
-const createAdmin = async (nombre, apellidos, edad, genero, contacto, role, capture) => {
+const createAdmin = async (email, password, capture) => {
     const query = `
         mutation($input: NewAdminInput!) {
             createAdmin(input: $input) {
                 id
-                nombre, 
-                apellidos, 
-                edad, 
-                genero, 
-                contacto, 
-                role,
+                email 
+                password
                 created_at
             }
         }      
     `;
     const input = {
-        nombre, 
-        apellidos, 
-        edad, 
-        genero, 
-        contacto, 
-        role,
+        email,
+        password,
         capture
     };
     return await fetchAPI(query, input);
@@ -31,17 +23,10 @@ const createAdmin = async (nombre, apellidos, edad, genero, contacto, role, capt
 const getAdmins = async (limit) => {
     const query = `
         query{
-            admins {
-                items {                    
-                    id
-                    nombre 
-                    apellidos 
-                    edad 
-                    genero 
-                    contacto 
-                    role      
-                    created_at  
-            
+            users {
+                items {
+                    id                    
+                    email                  
                 }
             }
         }
@@ -52,23 +37,19 @@ const getAdmins = async (limit) => {
     return await fetchAPI(query, input);
 };
 
-const updateAdmin = async (id, nombre, apellidos, edad, genero, contacto, role, capture) => {
+const updateAdmin = async (id, email, password, capture) => {
     const query = `
         mutation($input: UpdateAdminInput!) {
             updateAdmin(input: $input) {
                 id
-                nombre 
-                apellidos 
-                edad 
-                genero 
-                contacto 
-                role
+                email 
+                password
                 updated_at
             }
         }
     `;
     const variables = {
-        input: { id, nombre, apellidos, edad, genero, contacto, role, capture }
+        input: { id, email, password, capture }
     };
     return await fetchAPI(query, variables);
 };

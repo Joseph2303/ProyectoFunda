@@ -52,3 +52,19 @@ self.addEventListener('sync',event=>{
         event.waitUntil(syncOnline())
     }
 });
+self.addEventListener('fetch',event=>{
+
+});
+
+function clearCache(cacheName,maxItems){
+    caches.open(cacheName)
+    .then(cache=>{
+        return cache.keys()
+            .then(keys=>{
+                if(keys.length>maxItems){
+                    cache.delete(keys[0])
+                        .then(clearCache(cacheName,maxItems));
+                }
+            });
+    });
+}
