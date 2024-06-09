@@ -1,8 +1,8 @@
 importScripts('https://cdnjs.cloudflare.com/ajax/libs/pouchdb/8.0.1/pouchdb.min.js')
-importScripts('js/sw-db.js')
-const CACHE_STATIC_NAME='sw-una-task-static-v1';
-const CACHE_DYNAMIC_NAME='sw-una-task-dynamic-v1';
-const CACHE_INMUTABLE_NAME='sw-una-task-inmutable-v1';
+importScripts('ProyectoFundamentos/js/sw-db.js')
+const CACHE_STATIC_NAME='sw-pfw-static-v1';
+const CACHE_DYNAMIC_NAME='sw-pfw-dynamic-v1';
+const CACHE_INMUTABLE_NAME='sw-pfw-inmutable-v1';
 const CACHE_LIMIT=200;
 
 self.addEventListener('install',event=>{
@@ -11,31 +11,31 @@ self.addEventListener('install',event=>{
         .then(cache=>{
             return cache.addAll([
                 '/',
-                '/ProyectoFundamentos/views/Admin/main.html',
-                '/ProyectoFundamentos/views/Admin/citasDoctor.html',
-                '/ProyectoFundamentos/views/Admin/citasPaciente.html',
-                '/ProyectoFundamentos/views/Admin/citas.html',
-                '/ProyectoFundamentos/views/Admin/paciente.html',
-                '/ProyectoFundamentos/views/Doctor/main.html',
-                '/ProyectoFundamentos/views/Login/login.html',
-                '/ProyectoFundamentos/views/Paciente/main.html',
+        /**         'ProyectoFundamentos/views/Admin/main.html',
+                'ProyectoFundamentos/views/Admin/citasDoctor.html',
+                'ProyectoFundamentos/views/Admin/citasPaciente.html',
+                'ProyectoFundamentos/views/Admin/citas.html',
+                'ProyectoFundamentos/views/Admin/paciente.html',
+                'ProyectoFundamentos/views/Doctor/main.html',
+                'ProyectoFundamentos/views/Login/login.html',
+                'ProyectoFundamentos/views/Paciente/main.html',
 
-                '/ProyectoFundamentos/views/Login/login.css',
-                '/ProyectoFundamentos/views/Admin/Style/main.css',
+                'ProyectoFundamentos/views/Login/login.css',
+                'ProyectoFundamentos/views/Admin/Style/main.css',
 
-                '/ProyectoFundamentos/Assets/img/origin.jpg',
-                '/ProyectoFundamentos/Assets/img/maxresdefault.jpg',
-                '/ProyectoFundamentos/Assets/icon/doctor.png',
-                '/ProyectoFundamentos/Assets/icon/download.png',
-                '/ProyectoFundamentos/Assets/icon/icegif.gif',
+                'ProyectoFundamentos/Assets/img/origin.jpg',
+                'ProyectoFundamentos/Assets/img/maxresdefault.jpg',
+                'ProyectoFundamentos/Assets/icon/doctor.png',
+                'ProyectoFundamentos/Assets/icon/download.png',
+                'ProyectoFundamentos/Assets/icon/icegif.gif',
 
-                '/ProyectoFundamentos/Scripts/Admin/main.js',
-                '/ProyectoFundamentos/Scripts/Doctor/main.js',
-                '/ProyectoFundamentos/Scripts/Login/main.js',
-                '/ProyectoFundamentos/Scripts/Paciente/main.js',
+                'ProyectoFundamentos/Scripts/Admin/main.js',
+                'ProyectoFundamentos/Scripts/Doctor/main.js',
+                'ProyectoFundamentos/Scripts/Login/main.js',
+                'ProyectoFundamentos/Scripts/Paciente/main.js',
 
-                '/ProyectoFundamentos/views/Admin/main.js',
-                '/ProyectoFundamentos/js/app.js'
+                'ProyectoFundamentos/views/Admin/main.js',
+                'ProyectoFundamentos/js/app.js'*/
             ]);
         });
     const cacheInmutableProm=caches.open(CACHE_INMUTABLE_NAME)
