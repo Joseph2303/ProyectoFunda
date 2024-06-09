@@ -105,7 +105,7 @@ async function getDatesForms(event) {
         console.log('hola');
     } else if (email) {
         try {
-            const user = await createUser(email, password, 'Paciente');
+            const user = await createUser(0, email, password, 'Paciente');
             await createPatient(name, last_name, age, cedula, gender, contact, user.data.createUser.id);
             console.log('Paciente y usuario creados exitosamente');
         } catch (error) {
