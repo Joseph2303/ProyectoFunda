@@ -1,11 +1,11 @@
-let url=window.location.href;
-let swLoc="ProyectoFundamentos/service-worker.js";
-if(navigator.serviceWorker){
-    if(url.includes('localhost') || url.includes('127.0.0.1') ){
-        swLoc='/service-worker.js';
+let url = window.location.href;
+let swLoc = "ProyectoFundamentos/service-worker.js";
+if (navigator.serviceWorker) {
+    if (url.includes('localhost') || url.includes('127.0.0.1')) {
+        swLoc = '/service-worker.js';
     }
     navigator.serviceWorker.register(swLoc)
-        .then(reg=>{
+        .then(reg => {
             // setTimeout(()=>{
             //     reg.sync.register('post-new-user');
             //     console.log("Se envió la información al servidor");
@@ -13,10 +13,10 @@ if(navigator.serviceWorker){
         });
 }
 
-function notifications(){
-    if(window.Notification){
-        if(Notification.permission==='default'){
-            Notification.requestPermission((permission)=>{
+function notifications() {
+    if (window.Notification) {
+        if (Notification.permission === 'default') {
+            Notification.requestPermission((permission) => {
                 console.log(permission)
             })
         }
@@ -41,7 +41,7 @@ function subscribeToPushNotifications() {
             registration.pushManager.subscribe({
                 userVisibleOnly: true,
                 applicationServerKey: urlBase64ToUint8Array('BOMqtBkWm3Jrwphu4CdqpHNS648MUxdHcGS6LX8cN7EHx6qxcHLtyQV8LPhCdCNLWY8k1eDXz5BMqrwXazixfAw')
-               
+
             }).then(subscription => {
                 console.log('Suscripción exitosa a las notificaciones push:', subscription);
                 sendSubscriptionToServer(subscription);
@@ -52,9 +52,9 @@ function subscribeToPushNotifications() {
     }
 }
 
- function sendSubscriptionToServer(subscription) {
+function sendSubscriptionToServer(subscription) {
     try {
-        const response =  fetch('/notificacion', {
+        const response = fetch('/notificacion', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'
@@ -66,7 +66,7 @@ function subscribeToPushNotifications() {
             throw new Error('Error al enviar la suscripción al servidor');
         }
 
-        const data =  response.json();
+        const data = response.json();
         console.log('Suscripción enviada con éxito:', data);
     } catch (error) {
         console.error('Error al enviar la suscripción al servidor:', error);
@@ -98,11 +98,17 @@ async function getDatesForms(event) {
     const contact = $('#patientContact').val();
     const email = $('#patientEmail').val();
     const password = $('#patientPassword').val();
+
     const _email = $('#email').val();
     const _password = $('#password').val();
-
+    console.log(_email)
+    console.log(email)
     if (_email) {
-        console.log('hola');
+        try {
+            login(_email, _password);
+        } catch (error) {
+            console.error('Error al crear usuario o paciente:', error);
+        }
     } else if (email) {
         try {
             const user = await createUser(0, email, password, 'Paciente');
@@ -114,7 +120,7 @@ async function getDatesForms(event) {
     }
 }
 
-window.onload=(e)=>{
+window.onload = (e) => {
     //Metodo que verifique el token
     //Si existe el token, cargamos las tareas
     //Si no exite, debemos crear un modal (sin que cierre) solicitando el inicio de sesión     

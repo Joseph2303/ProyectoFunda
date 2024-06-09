@@ -104,7 +104,6 @@ const fetchAPI = async (query, input) => {
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 
 const createPatient = async (name, last_name, age, cedula, gender, contact, userId) => {
-    console.log('entro')
     const query = `
         mutation($input: NewPatientInput!) {
             createPatient(input: $input) {
@@ -129,5 +128,39 @@ const createPatient = async (name, last_name, age, cedula, gender, contact, user
     } catch (error) {
         console.error('Error al crear paciente:', error);
         throw error;
+    }
+}
+
+
+/////////////////////////////////////////////////////////////////////////////////////////////
+
+async function login(email, password) {
+    try {
+        const response = await fetch('http://localhost:9000/login', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ email, password })
+        });
+
+        if (!response.ok) {
+            throw new Error('Login fallido');
+        }
+
+        const data = await response.json();
+        const token = data.token;
+        localStorage.setItem('token', token); 
+        console.log('Login exitoso', token);
+        console.log('Datos del usuario:', data);
+        if(data.user.role = 'Paciente'){
+            window.location.href = '/ProyectoFundamentos/views/Paciente/main.html'
+        }else if(data.user.role = 'Doctor'){
+            window.location.href = '/ProyectoFundamentos/views/Doctor/main.html'
+        }else{
+            window.location.href = '/ProyectoFundamentos/views/Admin/main.html'
+        }
+    } catch (error) {
+        console.error('Error al iniciar sesión:', error);
     }
 }

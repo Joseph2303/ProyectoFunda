@@ -20,7 +20,6 @@ function syncOnline(){
             const doc=row.doc
             const query=fetchAPI(doc.query,doc.variables.input)
                 .then(resp=>{
-                    //verificar que fue exitosa
                     return db.remove(doc)
                 })
             promAll.push(query)
