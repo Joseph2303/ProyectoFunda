@@ -152,7 +152,7 @@ async function getDoctores(){
     const doctorSelect = document.getElementById('doctor-select');
 
     try {
-        const limit = 10; // Define el límite deseado
+        const limit = 20; // Define el límite deseado
         const doctors = await getDoctors(limit);
         console.log(doctors)
         doctors.forEach(doctor => {

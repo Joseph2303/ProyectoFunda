@@ -19,15 +19,19 @@ const createAppointment = async (name, date, hour, doctorId, patientId) => {
 
 const getAppointment = async (limit) => {
     const query = `
-        query{
+        query {
             citas {
                 items {                    
                     id
                     name 
                     date
                     hour
-                    doctorId
-                    cedula
+                    doctor {
+                     id
+                     name
+                     last_name
+                     cedula
+                    }
                 }
             }
         }
@@ -36,7 +40,8 @@ const getAppointment = async (limit) => {
         limit
     };
     const response = await fetchAPI(query, input);
-    return response.data.doctors.items;
+    console.log(response)
+    return response.data.citas.items;
 };
 
 const updateAdmin = async (id, nombre, apellidos, edad, genero, contacto, role, capture) => {
@@ -60,10 +65,10 @@ const updateAdmin = async (id, nombre, apellidos, edad, genero, contacto, role, 
     return await fetchAPI(query, variables);
 };
 
-const deleteAdmin = async (id) => {
+const deleteAppointment = async (id) => {
     const query = `
         mutation($id: ID!) {
-            deleteAdmin(id: $id) {
+            deleteCita(id: $id) {
                 id
             }
         }

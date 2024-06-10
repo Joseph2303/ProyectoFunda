@@ -147,20 +147,37 @@
                         <th>Acciones</th>
                     </tr>
                 </thead>
-                <tbody>
+                <tbody id="bodyTable">
                 </tbody>
             </table>
         </div>
     </di>
 
     <script>
-
         $(document).ready(function () {
             getDoctores();
-            cargarTabla;
+            cargarTabla();
         });
-        function cargarTabla(){
+        async function cargarTabla() {
 
+            $("#bodyTable").empty();
+            const citas = await getAppointment(100);
+            citas.forEach(cita => {
+                let filaHTML = `<tr id="row-id${cita.id}"> 
+                <td>${cita.name}</td>
+                <td>${cita.date}</td>
+                <td>${cita.hour}</td>
+                <td>${cita.doctor.name + ' ' + cita.doctor.last_name + ', Cedula:' + cita.doctor.cedula}</td> 
+                <td><button class="btn-eliminar" data-id="${cita.id}">Eliminar</button></td>
+                </tr>`;
+                $("#bodyTable").append(filaHTML);
+            });
+
+            $(".btn-eliminar").click(async function (event) {
+                const citaId = $(this).data("id");
+                await deleteAppointment(citaId);
+                $(`#row-${citaId}`).remove();
+            });
         }
     </script>
 
