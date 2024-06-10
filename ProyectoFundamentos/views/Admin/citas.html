@@ -176,7 +176,6 @@
             $(".btn-eliminar").click(async function (event) {
                 const citaId = $(this).data("id");
                 await deleteAppointment(citaId);
-                $(`#row-${citaId}`).remove();
             });
         }
     </script>
