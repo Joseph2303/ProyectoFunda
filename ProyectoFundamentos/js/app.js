@@ -88,6 +88,18 @@ function urlBase64ToUint8Array(base64String) {
     return outputArray;
 }
 
+window.onload = (e) => {
+    //Metodo que verifique el token
+    //Si existe el token, cargamos las tareas
+    //Si no exite, debemos crear un modal (sin que cierre) solicitando el inicio de sesión     
+    requestNotificationPermission();
+    //subscribeToPushNotifications();
+    notifications()
+    //llamar al metodo de subcripción
+}
+
+///////////////////////////////////////////////////////////////////////////
+//login
 async function getDatesForms(event) {
     event.preventDefault();
     const name = $('#patientName').val();
@@ -107,7 +119,7 @@ async function getDatesForms(event) {
         try {
             login(_email, _password);
         } catch (error) {
-            console.error('Error al crear usuario o paciente:', error);
+            console.error('Error al iniciar sesion:', error);
         }
     } else if (email) {
         try {
@@ -120,12 +132,37 @@ async function getDatesForms(event) {
     }
 }
 
-window.onload = (e) => {
-    //Metodo que verifique el token
-    //Si existe el token, cargamos las tareas
-    //Si no exite, debemos crear un modal (sin que cierre) solicitando el inicio de sesión     
-    requestNotificationPermission();
-    //subscribeToPushNotifications();
-    notifications()
-    //llamar al metodo de subcripción
+///////////////////////
+//paciente
+function acceptAppointment(event){
+    event.preventDefault();
+    const name = $('#appointmentName').val();
+    const date = $('#appointmentDate').val();
+    const hour = $('#appointmentTime').val();
+    const doctor = $('#doctor-select').val();
+    console.log(hour)
+    try {
+        createAppointment(name, date,hour,doctor);
+    } catch (error) {
+        console.error('Error al crear la cita:', error);
+    }
 }
+
+async function getDoctores(){
+    const doctorSelect = document.getElementById('doctor-select');
+
+    try {
+        const limit = 10; // Define el límite deseado
+        const doctors = await getDoctors(limit);
+        console.log(doctors)
+        doctors.forEach(doctor => {
+            const option = document.createElement('option');
+            option.value = doctor.id;
+            option.textContent = `Nombre: ${doctor.name} ${doctor.last_name}, Cedula: ${doctor.cedula}`;
+            doctorSelect.appendChild(option);
+        });
+    } catch (error) {
+        console.error('Error al crear la cita:', error);
+    }
+}
+

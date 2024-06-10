@@ -152,10 +152,10 @@ async function login(email, password) {
         const token = data.token;
         localStorage.setItem('token', token); 
         console.log('Login exitoso', token);
-        console.log('Datos del usuario:', data);
-        if(data.user.role = 'Paciente'){
+        console.log('Datos del usuario:', data.user.role);
+        if(data.user.role == 'Paciente'){
             window.location.href = '/ProyectoFundamentos/views/Paciente/main.html'
-        }else if(data.user.role = 'Doctor'){
+        }else if(data.user.role == 'Doctor'){
             window.location.href = '/ProyectoFundamentos/views/Doctor/main.html'
         }else{
             window.location.href = '/ProyectoFundamentos/views/Admin/main.html'
