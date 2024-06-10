@@ -65,17 +65,43 @@ const updateAdmin = async (id, nombre, apellidos, edad, genero, contacto, role, 
     return await fetchAPI(query, variables);
 };
 
-const deleteAppointment = async (id) => {
+const deleteAppointment = async (deleteCitaId) => {
     const query = `
-        mutation($id: ID!) {
-            deleteCita(id: $id) {
-                id
+        mutation($deleteCitaId: ID!) {
+            deleteCita(id: $deleteCitaId) {
+             id   
             }
         }
     `;
-    const variables = { id };
-    return await fetchAPI(query, variables);
+    const variables = { deleteCitaId };
+    return await fetchAPIdelete(query, variables);
 };
+
+const fetchAPIdelete = async (query, variables ) => {
+    const options = {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            Authorization
+        },
+        body: JSON.stringify({
+            query,
+            variables       
+        })
+    };
+    try {
+        const result = await fetch(urlAPI, options);
+        const data = await result.json();
+        if (data.errors) {
+            cargarTabla();
+            throw new Error(data.errors[0].message);
+        }
+        return data;
+    } catch (error) {
+        console.error('Error en la solicitud GraphQL:', error);
+        throw new Error('Error en la solicitud GraphQL. Por favor, inténtalo de nuevo más tarde.');
+    }
+}
 
 const fetchAPI = async (query, input) => {
     const options = {

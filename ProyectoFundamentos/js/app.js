@@ -143,6 +143,7 @@ function acceptAppointment(event){
     console.log(hour)
     try {
         createAppointment(name, date,hour,doctor);
+        cargarTabla();
     } catch (error) {
         console.error('Error al crear la cita:', error);
     }
