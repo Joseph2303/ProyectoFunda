@@ -8,7 +8,7 @@
     <link rel="stylesheet" href="/ProyectoFundamentos/views/Login/login.css">
     <link rel="icon" type="image/x-icon" href="/ProyectoFundamentos/Assets/icon/doctor.png">
     <title>Iniciar Sesión</title>
-    
+
 </head>
 
 <body>
@@ -54,7 +54,7 @@
                     <label for="patientPassword">Contraseña:</label>
                     <input type="password" id="patientPassword" name="patientPassword" required>
                 </div>
-                <button onclick="getDatesForms(event)" >Registrarse</button>
+                <button onclick="getDatesForms(event)">Registrarse</button>
             </form>
         </div>
 
@@ -71,21 +71,34 @@
                 <div class="toggle-panel toggle-left">
                     <h1>¡Bienvenido de nuevo!</h1>
                     <p>Ingresa para usar todas las funciones del sitio</p>
-                    <button class="hidden" id="login">Iniciar Sesión</button>
+                    <button onclick="clearFormFields()" class="hidden" id="login">Iniciar Sesión</button>
                 </div>
                 <div class="toggle-panel toggle-right">
                     <h1>¡Bienvenido!</h1>
                     <p>Regístrate para usar todas las funciones del sitio</p>
-                    <button class="hidden" id="register">Registrarse</button>
+                    <button onclick="clearFormFields()" class="hidden" id="register">Registrarse</button>
                 </div>
             </div>
         </div>
     </div>
-
+    <script>
+        function clearFormFields() {
+            $('#patientName').val('');
+            $('#patientLastName').val('');
+            $('#patientAge').val('');
+            $('#patientCedula').val('');
+            $('#patientContact').val('');
+            $('#patientEmail').val('');
+            $('#patientPassword').val('');
+            $('#email').val('');
+            $('#password').val('');
+        }
+    </script>
     <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
     <script src="/ProyectoFundamentos/Scripts/Login/login.js"></script>
     <script src="/ProyectoFundamentos/js/services/user_service.js"></script>
     <script src="/ProyectoFundamentos/js/app.js"></script>
+
 </body>
 
 </html>
