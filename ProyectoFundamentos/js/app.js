@@ -13,6 +13,25 @@ if (navigator.serviceWorker) {
         });
 }
 
+if ('serviceWorker' in navigator && 'SyncManager' in window) {
+    navigator.serviceWorker.register('/service-worker.js').then(registration => {
+        console.log('Service Worker registrado con éxito:', registration);
+
+        window.addEventListener('online', () => {
+            registration.sync.register('sync-pending-operations')
+                .then(() => {
+                    console.log('Sincronización en segundo plano registrada');
+                })
+                .catch(err => {
+                    console.error('Error al registrar la sincronización en segundo plano:', err);
+                });
+        });
+    }).catch(err => {
+        console.error('Error al registrar el Service Worker:', err);
+    });
+}
+
+
 function notifications() {
     if (window.Notification) {
         if (Notification.permission === 'default') {
@@ -208,7 +227,7 @@ function actPatient(event){
     const email = $('#patientEmail').val();
     const password = $('#patientPassword').val();
 }
-
+// local storage
 const saveDataToCache = async (url, data) => {
     if ('serviceWorker' in navigator && navigator.serviceWorker.controller) {
         navigator.serviceWorker.controller.postMessage({
@@ -220,9 +239,43 @@ const saveDataToCache = async (url, data) => {
 };
 
 const getCachedData = async (url) => {
-    const CACHE_DYNAMIC_NAME = 'sw-pfw-dynamic-v1'; // Definir el nombre del caché aquí
-    const cache = await caches.open(CACHE_DYNAMIC_NAME);
-    const response = await cache.match(url);
-    if (!response) return null;
-    return response.json();
+    const cachedData = localStorage.getItem(url);
+    return cachedData ? JSON.parse(cachedData) : null;
 };
+const savePendingOperation = async (operation) => {
+    try {
+        let pendingOperations = JSON.parse(localStorage.getItem('pendingOperations')) || [];
+        pendingOperations.push(operation);
+        localStorage.setItem('pendingOperations', JSON.stringify(pendingOperations));
+    } catch (error) {
+        console.error('Error al guardar la operación pendiente:', error);
+        throw error;
+    }
+};
+// Función para obtener y eliminar operaciones pendientes de localStorage
+const getAndClearPendingOperations = () => {
+    const pendingOperations = JSON.parse(localStorage.getItem('pendingOperations')) || [];
+    localStorage.removeItem('pendingOperations');
+    console.log(pendingOperations);
+    return pendingOperations;
+};
+const syncPendingOperations = async () => {
+    try {
+        const operations = getAndClearPendingOperations();
+        console.log('Operaciones pendientes:', operations); // Agregar este console.log para ver las operaciones pendientes
+        for (const operation of operations) {
+            if (operation.type === 'createUser') {
+                const { id, email, password, role } = operation.payload;
+                await createUser(id, email, password, role);
+            }
+            // Agrega más lógica aquí para otros tipos de operaciones si es necesario
+        }
+        console.log('Operaciones pendientes sincronizadas con éxito');
+    } catch (error) {
+        console.error('Error al sincronizar operaciones pendientes:', error);
+    }
+};
+
+window.addEventListener('online', async () => {
+    await syncPendingOperations();
+});
