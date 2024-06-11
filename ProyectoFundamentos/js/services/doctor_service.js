@@ -28,25 +28,54 @@ const createDoctor = async (nombre, apellidos, edad, genero, contacto, role, cap
     return await fetchAPI(query, input);
 }
 
-const getDoctors = async () => {
-    const query = `
-        query{
-            doctors {
-                items {                    
-                    id
-                    nombre 
-                    apellidos 
-                    edad 
-                    genero 
-                    contacto
-                    role
-                    created_at                  
+const getDoctors = async (limit) => {
+    try {
+        const query = `
+            query {
+                doctors {
+                    items {
+                        id
+                        nombre
+                        apellidos
+                        edad
+                        genero
+                        contacto
+                        role
+                        created_at
+                    }
                 }
             }
+        `;
+        const input = { limit };
+        const response = await fetchAPI(query, {});
+
+        if (!response || !response.doctors || !response.doctors.items) {
+            console.error('Estructura de la respuesta inválida:', response);
+            throw new Error('Datos inválidos de la respuesta de la API');
         }
-    `;
-    return await fetchAPI(query, {});
+
+        saveDataToCache(urlAPI + "/getDoctors", response); // Guardar los datos en caché
+        return response.doctors.items;
+    } catch (error) {
+        console.error('Error al obtener los doctores desde internet:', error);
+
+        // Intentar obtener los datos del caché
+        try {
+            const cachedData = await getCachedData(urlAPI + "/getDoctors");
+            if (cachedData && cachedData.doctors && cachedData.doctors.items) {
+                console.log("Datos obtenidos del caché:", cachedData);
+                return cachedData.doctors.items;
+            } else {
+                console.error('No se encontraron datos en caché:', cachedData);
+                throw new Error('No se encontraron datos en caché');
+            }
+        } catch (cacheError) {
+            console.error('Error al obtener los doctores desde caché:', cacheError);
+            throw cacheError;
+        }
+    }
 };
+
 
 const updateDoctor = async (id, nombre, apellidos, edad, genero, contacto, role,capture) => {
     const query = `

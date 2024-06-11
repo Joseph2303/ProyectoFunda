@@ -29,27 +29,51 @@ const createAdmin = async (nombre, apellidos, edad, genero, contacto, role, capt
 }
 
 const getAdmins = async (limit) => {
-    const query = `
-        query{
-            admins {
-                items {                    
-                    id
-                    nombre 
-                    apellidos 
-                    edad 
-                    genero 
-                    contacto 
-                    role      
-                    created_at  
-            
+    try {
+        const query = `
+            query {
+                admins {
+                    items {
+                        id
+                        nombre
+                        apellidos
+                        edad
+                        genero
+                        contacto
+                        role
+                        created_at
+                    }
                 }
             }
+        `;
+        const input = { limit };
+        const response = await fetchAPI(query, input);
+
+        if (!response || !response.admins || !response.admins.items) {
+            console.error('Estructura de la respuesta inválida:', response);
+            throw new Error('Datos inválidos de la respuesta de la API');
         }
-    `;
-    const input = {
-        limit
-    };
-    return await fetchAPI(query, input);
+
+        saveDataToCache(urlAPI + "/getAdmins", response); // Guardar los datos en caché
+        return response.admins.items;
+    } catch (error) {
+        console.error('Error al obtener los administradores desde internet:', error);
+
+        // Intentar obtener los datos del caché
+        try {
+            const cachedData = await getCachedData(urlAPI + "/getAdmins");
+            if (cachedData && cachedData.admins && cachedData.admins.items) {
+                console.log("Datos obtenidos del caché:", cachedData);
+                return cachedData.admins.items;
+            } else {
+                console.error('No se encontraron datos en caché:', cachedData);
+                throw new Error('No se encontraron datos en caché');
+            }
+        } catch (cacheError) {
+            console.error('Error al obtener los administradores desde caché:', cacheError);
+            throw cacheError;
+        }
+    }
 };
 
 const updateAdmin = async (id, nombre, apellidos, edad, genero, contacto, role, capture) => {

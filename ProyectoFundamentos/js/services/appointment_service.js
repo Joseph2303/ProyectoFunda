@@ -18,30 +18,54 @@ const createAppointment = async (name, date, hour, status, doctorId, patientId) 
 }
 
 const getAppointment = async (limit) => {
-    const query = `
-        query {
-            citas {
-                items {                    
-                    id
-                    name 
-                    date
-                    hour
-                    doctor {
-                     id
-                     name
-                     last_name
-                     cedula
+    try {
+        const query = `
+            query {
+                citas {
+                    items {                    
+                        id
+                        name 
+                        date
+                        hour
+                        status
+                        doctor {
+                            id
+                            name
+                            last_name
+                            cedula
+                        }
                     }
                 }
             }
+        `;
+        const input = { limit };
+        const response = await fetchAPI(query, {});
+
+        if (!response || !response.citas || !response.citas.items) {
+            console.error('Estructura de la respuesta inválida:', response);
+            throw new Error('Datos inválidos de la respuesta de la API');
         }
-    `;
-    const input = {
-        limit
-    };
-    const response = await fetchAPI(query, input);
-    console.log(response)
-    return response.data.citas.items;
+
+        saveDataToCache(urlAPI + "/getCitas", response); // Guardar los datos en caché
+        return response.citas.items;
+    } catch (error) {
+        console.error('Error al obtener las citas desde internet:', error);
+
+        // Intentar obtener los datos del caché
+        try {
+            const cachedData = await getCachedData(urlAPI + "/getCitas");
+            if (cachedData && cachedData.citas && cachedData.citas.items) {
+                console.log("Datos obtenidos del caché:", cachedData);
+                return cachedData.citas.items;
+            } else {
+                console.error('No se encontraron datos en caché:', cachedData);
+                throw new Error('No se encontraron datos en caché');
+            }
+        } catch (cacheError) {
+            console.error('Error al obtener las citas desde caché:', cacheError);
+            throw cacheError;
+        }
+    }
 };
 
 const updateAdmin = async (id, nombre, apellidos, edad, genero, contacto, role, capture) => {

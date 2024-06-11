@@ -18,30 +18,76 @@ const createUser = async (id, email, password, role) => {
         password,
         role,
     };
+
     try {
-        return await fetchAPI(query, input);
+        if (navigator.onLine) {
+            return await fetchAPI(query, input);
+        } else {
+            const operation = { type: 'createUser', payload: { id, email, password, role } };
+            await savePendingOperation(operation);
+            const message = `Operación pendiente guardada. Se realizará cuando haya conexión. Datos: ${JSON.stringify(operation)}`;
+            
+            if ('Notification' in window && Notification.permission === 'granted') {
+                new Notification(message);
+            } else if ('Notification' in window && Notification.permission !== 'denied') {
+                Notification.requestPermission().then(function(permission) {
+                    if (permission === 'granted') {
+                        new Notification(message);
+                    }
+                });
+            } else {
+                console.error('Las notificaciones no están permitidas.');
+            }
+    
+            throw new Error('No hay conexión a Internet. La operación se realizará cuando haya conexión.');
+        }
     } catch (error) {
-        console.error('Error al crear asuario:', error);
-        // Puedes manejar el error aquí, por ejemplo, mostrando un mensaje al usuario o realizando alguna acción adicional
-        throw error; // Lanza el error para que pueda ser manejado por la parte que llama a esta función, si es necesario
+        console.error('Error al crear usuario:', error);
+        throw error;
     }
-}
+};
+
 
 const getAdmins = async (limit) => {
-    const query = `
-        query{
-            users {
-                items {
-                    id                    
-                    email                  
+    try {
+        const query = `
+            query {
+                users {
+                    items {
+                        id
+                        email
+                    }
                 }
             }
+        `;
+        const input = { limit };
+        const response = await fetchAPI(query, input);
+
+        if (!response || !response.users || !response.users.items) {
+            console.error('Estructura de la respuesta inválida:', response);
+            throw new Error('Datos inválidos de la respuesta de la API');
         }
-    `;
-    const input = {
-        limit
-    };
-    return await fetchAPI(query, input);
+
+        saveDataToCache(urlAPI + "/getAdmins", response); // Guardar los datos en caché
+        return response.users.items;
+    } catch (error) {
+        console.error('Error al obtener los administradores desde internet:', error);
+
+        // Intentar obtener los datos del caché
+        try {
+            const cachedData = await getCachedData(urlAPI + "/getAdmins");
+            if (cachedData && cachedData.users && cachedData.users.items) {
+                console.log("Datos obtenidos del caché:", cachedData);
+                return cachedData.users.items;
+            } else {
+                console.error('No se encontraron datos en caché:', cachedData);
+                throw new Error('No se encontraron datos en caché');
+            }
+        } catch (cacheError) {
+            console.error('Error al obtener los administradores desde caché:', cacheError);
+            throw cacheError;
+        }
+    }
 };
 
 const updateAdmin = async (id, email, password, capture) => {
@@ -170,3 +216,22 @@ async function login(email, password) {
         console.error('Error al iniciar sesión:', error);
     }
 }
+
+const showNotification = (message) => {
+    // Comprobar si las notificaciones están disponibles en el navegador
+    if (!("Notification" in window)) {
+        console.error("Este navegador no soporta notificaciones");
+        return;
+    }
+
+    // Solicitar permiso para mostrar notificaciones si aún no se ha solicitado
+    if (Notification.permission !== "granted") {
+        Notification.requestPermission().then((permission) => {
+            if (permission === "granted") {
+                new Notification(message);
+            }
+        });
+    } else {
+        new Notification(message);
+    }
+};
