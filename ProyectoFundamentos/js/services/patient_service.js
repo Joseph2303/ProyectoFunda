@@ -1,15 +1,5 @@
-const fetchAPI = async (query, variables) => {
-    const response = await fetch(urlAPI, {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json',
-            'Authorization': Authorization
-        },
-        body: JSON.stringify({ query, variables })
-    });
-    const data = await response.json();
-    return data.data;
-};
+const Authorization = "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJhQXN4ZXFzZXJmc2QiLCJlbWFpbCI6ImVkZGllckB1bmEuY3IiLCJuYW1lIjoiRWRkaWVyIiwiaWF0IjoxNzE3NjMwNTc4fQ.m_G6IiX7knD9hppJ5yVpP8KN6ggMoKY4_s3hnmL4CFU";
+const urlAPI = "http://localhost:9000/graphql"
 
 const createPatient = async (nombre, apellidos, genero, edad, cedula, contacto, userId) => {
     const query = `
@@ -120,6 +110,19 @@ const deletePatient = async (id) => {
     return await fetchAPI(query, variables);
 };
 
+const fetchAPI = async (query, variables) => {
+    const response = await fetch(urlAPI, {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            'Authorization': Authorization
+        },
+        body: JSON.stringify({ query, variables })
+    });
+    const data = await response.json();
+    return data.data;
+};
+
 //////////////////////////////
 //citas
 const getAppointment = async (limit) => {
@@ -131,6 +134,7 @@ const getAppointment = async (limit) => {
                     name 
                     date
                     hour
+                    status
                     doctor {
                      id
                      name
@@ -146,5 +150,20 @@ const getAppointment = async (limit) => {
     };
     const response = await fetchAPI(query, input);
     console.log(response)
-    return response.data.citas.items;
+    return response.citas.items;
+};
+
+const updateAppointment = async (id, patientId, status) => {
+    const query = `
+        mutation UpdateCita($input: CitaInput!) {
+            updateCita(input: $input) {
+                id
+                name
+            }
+        }
+    `;
+    const variables = {
+        input: {id, patientId, status }
+    };
+    return await fetchAPI(query, variables);
 };

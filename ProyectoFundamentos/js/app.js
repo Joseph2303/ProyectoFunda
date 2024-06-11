@@ -134,7 +134,7 @@ async function getDatesForms(event) {
 
 ///////////////////////
 //paciente
-function acceptAppointment(event){
+function acceptAppointment(event) {
     event.preventDefault();
     const name = $('#appointmentName').val();
     const date = $('#appointmentDate').val();
@@ -142,14 +142,40 @@ function acceptAppointment(event){
     const doctor = $('#doctor-select').val();
     console.log(hour)
     try {
-        createAppointment(name, date,hour,doctor);
+        createAppointment(name, date, hour, "Disponible", doctor);
         cargarTabla();
     } catch (error) {
         console.error('Error al crear la cita:', error);
     }
 }
 
-async function getDoctores(){
+async function updateCita(event){
+    event.preventDefault();
+    const patientId = JSON.parse(localStorage.getItem('patient')).id;
+    const checkbox = document.querySelector('.action-checkbox:checked');
+    const id = checkbox.getAttribute('data-id');
+
+    try {
+
+        const updated = await updateAppointment(id, patientId, 'Pendiente');
+        if (updated) {
+            alert("Cita actualizada a Pendiente");
+            cargarTabla();
+            document.getElementById("myModal").style.display = "none";
+        } else {
+            alert("Error al actualizar la cita");
+        }
+
+    } catch (error) {
+        console.error('Error :', error);
+    }
+
+
+}
+
+///////////////////
+//cita
+async function getDoctores() {
     const doctorSelect = document.getElementById('doctor-select');
 
     try {
