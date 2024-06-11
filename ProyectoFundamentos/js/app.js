@@ -134,20 +134,6 @@ async function getDatesForms(event) {
 
 ///////////////////////
 //paciente
-function acceptAppointment(event) {
-    event.preventDefault();
-    const name = $('#appointmentName').val();
-    const date = $('#appointmentDate').val();
-    const hour = $('#appointmentTime').val();
-    const doctor = $('#doctor-select').val();
-    console.log(hour)
-    try {
-        createAppointment(name, date, hour, "Disponible", doctor);
-        cargarTabla();
-    } catch (error) {
-        console.error('Error al crear la cita:', error);
-    }
-}
 
 async function updateCita(event){
     event.preventDefault();
@@ -193,3 +179,32 @@ async function getDoctores() {
     }
 }
 
+///////////////
+//admin
+
+function acceptAppointment(event) {
+    event.preventDefault();
+    const name = $('#appointmentName').val();
+    const date = $('#appointmentDate').val();
+    const hour = $('#appointmentTime').val();
+    const doctor = $('#doctor-select').val();
+    console.log(hour)
+    try {
+        createAppointment(name, date, hour, "Disponible", doctor);
+        cargarTabla();
+    } catch (error) {
+        console.error('Error al crear la cita:', error);
+    }
+}
+
+function actPatient(event){
+    event.preventDefault();
+    const name = $('#patientName').val();
+    const last_name = $('#patientLastName').val();
+    const age = parseInt($('#patientAge').val());
+    const cedula = $('#patientCedula').val();
+    const gender = $('#patientGender').val();
+    const contact = $('#patientContact').val();
+    const email = $('#patientEmail').val();
+    const password = $('#patientPassword').val();
+}

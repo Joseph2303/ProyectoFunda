@@ -144,6 +144,7 @@
                         <th>Fecha</th>
                         <th>Hora</th>
                         <th>Doctor</th>
+                        <th>Paciente</th>
                         <th>Acciones</th>
                     </tr>
                 </thead>
@@ -163,11 +164,13 @@
             $("#bodyTable").empty();
             const citas = await getAppointment(100);
             citas.forEach(cita => {
+                let paciente = cita.patient ? `${cita.patient.name} ${cita.patient.last_name}, Cedula: ${cita.patient.cedula}` : 'Pendiente';
                 let filaHTML = `<tr id="row-id${cita.id}"> 
                 <td>${cita.name}</td>
                 <td>${cita.date}</td>
                 <td>${cita.hour}</td>
                 <td>${cita.doctor.name + ' ' + cita.doctor.last_name + ', Cedula:' + cita.doctor.cedula}</td> 
+                <td>${paciente}</td>
                 <td><button class="btn-eliminar" data-id="${cita.id}">Eliminar</button></td>
                 </tr>`;
                 $("#bodyTable").append(filaHTML);

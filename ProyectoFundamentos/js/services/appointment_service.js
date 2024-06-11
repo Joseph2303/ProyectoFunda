@@ -129,26 +129,3 @@ const fetchAPI = async (query, input) => {
         throw new Error('Error en la solicitud GraphQL. Por favor, inténtalo de nuevo más tarde.');
     }
 }
-
-////////////////////////////////
-//doctor
-
-const getDoctors = async (limit) => {
-    const query = `
-        query{
-            doctors {
-                items {                    
-                    id
-                    name 
-                    last_name
-                    cedula
-                }
-            }
-        }
-    `;
-    const input = {
-        limit
-    };
-    const response = await fetchAPI(query, input);
-    return response.data.doctors.items;
-};
