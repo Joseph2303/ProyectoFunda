@@ -5,7 +5,7 @@ const CACHE_LIMIT = 200;
 
 const urlsToCache = [
     '/',
-    //administrador
+    // administrador
     '/ProyectoFundamentos/views/Admin/citas.html',
     '/ProyectoFundamentos/views/Admin/citasDoctor.html',
     '/ProyectoFundamentos/views/Admin/Style/main.css',
@@ -14,18 +14,18 @@ const urlsToCache = [
     '/ProyectoFundamentos/views/Admin/main.html',
     '/ProyectoFundamentos/views/Admin/paciente.html',
     '/ProyectoFundamentos/views/Admin/main.js',
-    //Paciente
+    // Paciente
     '/ProyectoFundamentos/views/Paciente/main.html',
     '/ProyectoFundamentos/views/Paciente/pacienteMain.css',
-    //Doctor
+    // Doctor
     '/ProyectoFundamentos/views/Doctor/doctorMain.css',
     '/ProyectoFundamentos/views/Doctor/main.html',
-    //login
+    // login
     '/ProyectoFundamentos/views/Login/login.css',
     '/ProyectoFundamentos/views/Login/login.html',
     // logout
     '/ProyectoFundamentos/views/logout.js',
-    //services
+    // services
     '/ProyectoFundamentos/js/services/admin_service.js',
     '/ProyectoFundamentos/js/services/appointment_service.js',
     '/ProyectoFundamentos/js/services/auth.js',
@@ -37,7 +37,7 @@ const urlsToCache = [
     '/ProyectoFundamentos/js/router.js',
     '/ProyectoFundamentos/js/sw-db.js',
     '/ProyectoFundamentos/Scripts/Login/login.js',
-    //imagenes e iconos
+    // imágenes e iconos
     '/ProyectoFundamentos/Assets/img/origin.jpg',
     '/ProyectoFundamentos/Assets/img/maxresdefault.jpg',
     '/ProyectoFundamentos/Assets/icon/doctor.png',
@@ -50,7 +50,7 @@ function clearCache(cacheName, maxItems) {
     caches.open(cacheName).then(cache => {
         return cache.keys().then(keys => {
             if (keys.length > maxItems) {
-                cache.delete(keys[0]).then(clearCache(cacheName, maxItems));
+                cache.delete(keys[0]).then(() => clearCache(cacheName, maxItems));
             }
         });
     });
@@ -60,14 +60,22 @@ self.addEventListener('install', event => {
     console.log('Service Worker instalado');
     const cacheStaticProm = caches.open(CACHE_STATIC_NAME).then(cache => {
         console.log('Cache estático abierto');
-        return cache.addAll(urlsToCache);
+        return cache.addAll(urlsToCache).then(() => {
+            console.log('Recursos estáticos cacheados');
+        }).catch(error => {
+            console.error('Error al cachear recursos estáticos:', error);
+        });
     });
 
     const cacheInmutableProm = caches.open(CACHE_INMUTABLE_NAME).then(cache => {
         return cache.addAll([
             'https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css',
             'https://cdnjs.cloudflare.com/ajax/libs/pouchdb/8.0.1/pouchdb.min.js'
-        ]);
+        ]).then(() => {
+            console.log('Recursos inmutables cacheados');
+        }).catch(error => {
+            console.error('Error al cachear recursos inmutables:', error);
+        });
     });
 
     event.waitUntil(Promise.all([cacheStaticProm, cacheInmutableProm]));
@@ -78,6 +86,12 @@ self.addEventListener('activate', event => {
 });
 
 self.addEventListener('fetch', event => {
+    const url = event.request.url;
+    if (url.startsWith('chrome-extension://')) {
+        // Ignorar solicitudes con el esquema chrome-extension
+        return;
+    }
+
     event.respondWith(
         caches.match(event.request).then(response => {
             if (response) {
@@ -107,6 +121,24 @@ self.addEventListener('fetch', event => {
                 });
         })
     );
+});
+
+// Manejar mensajes para guardar datos específicos
+self.addEventListener('message', event => {
+    console.log('Mensaje recibido en el Service Worker:', event.data);
+    if (event.data.type === 'CACHE_DATA') {
+        console.log('Guardando en caché los datos:', event.data.url, event.data.data);
+        caches.open(CACHE_DYNAMIC_NAME).then(cache => {
+            const response = new Response(JSON.stringify(event.data.data));
+            cache.put(event.data.url, response).then(() => {
+                console.log('Datos guardados en caché:', event.data.url);
+            }).catch(error => {
+                console.error('Error al guardar en caché:', error);
+            });
+        }).catch(error => {
+            console.error('Error al abrir la caché:', error);
+        });
+    }
 });
 
 self.addEventListener('push', event => {

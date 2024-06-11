@@ -208,3 +208,21 @@ function actPatient(event){
     const email = $('#patientEmail').val();
     const password = $('#patientPassword').val();
 }
+
+const saveDataToCache = async (url, data) => {
+    if ('serviceWorker' in navigator && navigator.serviceWorker.controller) {
+        navigator.serviceWorker.controller.postMessage({
+            type: 'CACHE_DATA',
+            url: url,
+            data: data
+        });
+    }
+};
+
+const getCachedData = async (url) => {
+    const CACHE_DYNAMIC_NAME = 'sw-pfw-dynamic-v1'; // Definir el nombre del caché aquí
+    const cache = await caches.open(CACHE_DYNAMIC_NAME);
+    const response = await cache.match(url);
+    if (!response) return null;
+    return response.json();
+};
