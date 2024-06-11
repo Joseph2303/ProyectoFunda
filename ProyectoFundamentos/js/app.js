@@ -235,15 +235,6 @@ async function addDoctor(event) {
     }
 }
 
-    const name = $('#patientName').val();
-    const last_name = $('#patientLastName').val();
-    const age = parseInt($('#patientAge').val());
-    const cedula = $('#patientCedula').val();
-    const gender = $('#patientGender').val();
-    const contact = $('#patientContact').val();
-    const email = $('#patientEmail').val();
-    const password = $('#patientPassword').val();
-}
 // local storage
 const saveDataToCache = async (url, data) => {
     if ('serviceWorker' in navigator && navigator.serviceWorker.controller) {
