@@ -40,15 +40,7 @@
                         <th>Acciones</th>
                     </tr>
                 </thead>
-                <tbody>
-                    <tr>
-                        <td>Nombre del Doctor</td>
-                        <td>Tipo de Cita</td>
-                        <td>Fecha</td>
-                        <td>Hora</td>
-                        <td>Estado</td>
-                        <td><input type="checkbox" class="action-checkbox"></td>
-                    </tr>
+                <tbody id="bodyTable">
                     <!-- Agrega más filas según sea necesario -->
                 </tbody>
             </table>
@@ -181,10 +173,35 @@
         function searchTable(tabName) {
             // Código de búsqueda aquí
         }
+
+        $(document).ready(function () {
+            getDoctores();
+            cargarTabla();
+        });
+
+        async function cargarTabla() {
+            $("#bodyTable").empty();
+            const citas = await getAppointment(100);
+            citas.forEach(cita => {
+                let filaHTML = `<tr id="row-id${cita.id}"> 
+            <td>${cita.name}</td>
+            <td>${cita.date}</td>
+            <td>${cita.hour}</td>
+            <td>${cita.doctor.name + ' ' + cita.doctor.last_name + ', Cedula:' + cita.doctor.cedula}</td> 
+            <td><input type="checkbox" class="action-checkbox"></td>
+            </tr>`;
+                $("#bodyTable").append(filaHTML);
+            });
+
+            $(".btn-eliminar").click(async function (event) {
+                const citaId = $(this).data("id");
+                await deleteAppointment(citaId);
+            });
+        }
     </script>
 
-
-    <script src="/ProyectoFundamentos/js/services/admin_service.js"></script>
+    <script src="/ProyectoFundamentos/js/jquery.js"></script>
+    <script src="/ProyectoFundamentos/js/services/patient_service.js"></script>
     <script src="/ProyectoFundamentos/js/app.js"></script>
     <script src="/ProyectoFundamentos/js/ws.js"></script>
 

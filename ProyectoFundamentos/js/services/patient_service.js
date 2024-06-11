@@ -119,3 +119,32 @@ const deletePatient = async (id) => {
     const variables = { id };
     return await fetchAPI(query, variables);
 };
+
+//////////////////////////////
+//citas
+const getAppointment = async (limit) => {
+    const query = `
+        query {
+            citas {
+                items {                    
+                    id
+                    name 
+                    date
+                    hour
+                    doctor {
+                     id
+                     name
+                     last_name
+                     cedula
+                    }
+                }
+            }
+        }
+    `;
+    const input = {
+        limit
+    };
+    const response = await fetchAPI(query, input);
+    console.log(response)
+    return response.data.citas.items;
+};
