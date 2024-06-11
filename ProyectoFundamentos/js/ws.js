@@ -44,7 +44,7 @@ const newUserSubscription = () => {
             }
         }
         `;
-            } else if (role === 'user') {
+            } else if (role === 'Paciente') {
                 subscriptionQuery = `
         nuevoUsuario(chatID: "${userId}") {
             type
