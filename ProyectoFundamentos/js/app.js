@@ -135,7 +135,7 @@ async function getDatesForms(event) {
 ///////////////////////
 //paciente
 
-async function updateCita(event){
+async function updateCita(event) {
     event.preventDefault();
     const patientId = JSON.parse(localStorage.getItem('patient')).id;
     const checkbox = document.querySelector('.action-checkbox:checked');
@@ -197,14 +197,21 @@ function acceptAppointment(event) {
     }
 }
 
-function actPatient(event){
+async function addDoctor(event) {
     event.preventDefault();
-    const name = $('#patientName').val();
-    const last_name = $('#patientLastName').val();
-    const age = parseInt($('#patientAge').val());
-    const cedula = $('#patientCedula').val();
-    const gender = $('#patientGender').val();
-    const contact = $('#patientContact').val();
-    const email = $('#patientEmail').val();
-    const password = $('#patientPassword').val();
+    const name = $('#doctorName').val();
+    const last_name = $('#doctorLastName').val();
+    const age = parseInt($('#doctorAge').val());
+    const gender = $('#doctorGender').val();
+    const contact = $('#doctorContact').val();
+    const cedula = $('#doctorCedula').val();
+    const email = $('#doctorEmail').val();
+    const password = $('#doctorPassword').val();
+    try {
+        const user = await createUser(0, email, password, 'Doctor');
+        await createDoctor(name, last_name, age, cedula, gender, contact, user.data.createUser.id);
+        cargarTabla();
+    } catch (error) {
+        console.error('Error al crear el doctor:', error);
+    }
 }

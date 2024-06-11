@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="es">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -13,31 +14,32 @@
             box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
             border-radius: 10px;
         }
-        
-        h1, h2 {
+
+        h1,
+        h2 {
             text-align: center;
         }
-        
+
         form {
             display: flex;
             flex-direction: column;
             gap: 10px;
         }
-        
+
         form div {
             display: flex;
             flex-direction: column;
         }
-        
+
         form label {
             margin-bottom: 5px;
         }
-        
+
         form input {
             padding: 8px;
             font-size: 16px;
         }
-        
+
         button {
             padding: 10px;
             font-size: 16px;
@@ -47,52 +49,56 @@
             cursor: pointer;
             border-radius: 10px;
         }
-        
+
         button:hover {
             background-color: #3c5d88;
         }
-        
+
         table {
             width: 100%;
             border-collapse: collapse;
             margin-top: 20px;
         }
-        
-        table, th, td {
+
+        table,
+        th,
+        td {
             border: 1px solid #ddd;
         }
-        
-        th, td {
+
+        th,
+        td {
             padding: 8px;
             text-align: left;
         }
-        
+
         th {
             background-color: #f2f2f2;
         }
-        
+
         .actions {
             display: flex;
             gap: 10px;
         }
-        
+
         .actions button {
             padding: 5px 10px;
             font-size: 14px;
             cursor: pointer;
         }
-        
+
         .actions .edit {
             background-color: #0275d8;
             color: white;
         }
-        
+
         .actions .delete {
             background-color: #d9534f;
             color: white;
         }
     </style>
 </head>
+
 <body>
     <center>
         <h1 style="color: rgb(255, 255, 255);">Gestión de Doctor</h1>
@@ -100,30 +106,42 @@
     <div class="container">
         <form id="patientForm">
             <div>
-                <label for="patientName">Nombre del Doctor:</label>
-                <input type="text" id="patientName" name="patientName" required>
+                <label for="doctorName">Nombre del Doctor:</label>
+                <input type="text" id="doctorName" name="doctorName" required>
             </div>
             <div>
-                <label for="patientName">Apellidos del Doctor:</label>
-                <input type="text" id="patientName" name="patientName" required>
+                <label for="doctorLastName">Apellidos del Doctor:</label>
+                <input type="text" id="doctorLastName" name="doctorLastName" required>
             </div>
             <div>
-                <label for="patientAge">Edad del Doctor:</label>
-                <input type="number" id="patientAge" name="patientAge" required>
+                <label for="doctorAge">Edad del Doctor:</label>
+                <input type="number" id="doctorAge" name="doctorAge" required>
             </div>
             <div>
-                <label for="patientGender">Género del Doctor:</label>
-                <select id="patientGender" name="patientGender" required>
+                <label for="doctorGender">Género del Doctor:</label>
+                <select id="doctorGender" name="doctorGender" required>
                     <option value="Masculino">Masculino</option>
                     <option value="Femenino">Femenino</option>
                     <option value="Otro">Otro</option>
                 </select>
             </div>
             <div>
-                <label for="patientContact">Contacto del Doctor:</label>
-                <input type="text" id="patientContact" name="patientContact" required>
+                <label for="doctorContact">Contacto del Doctor:</label>
+                <input type="text" id="doctorContact" name="doctorContact" required>
             </div>
-            <button type="submit">Agregar Doctor</button>
+            <div>
+                <label for="doctorCedula">Cedula del Doctor:</label>
+                <input type="text" id="doctorCedula" name="doctorCedula" required>
+            </div>
+            <div>
+                <label for="doctorEmail">Correo del Doctor:</label>
+                <input type="email" id="doctorEmail" name="doctorEmail" required>
+            </div>
+            <div>
+                <label for="doctorPassword">Contraseña del Doctor:</label>
+                <input type="password" id="doctorPassword" name="doctorPassword" required>
+            </div>
+            <button onclick="addDoctor(event)">Agregar Doctor</button>
         </form>
         <br>
         <br>
@@ -133,80 +151,50 @@
             <thead>
                 <tr>
                     <th>Nombre</th>
+                    <th>Apelidos</th>
                     <th>Edad</th>
                     <th>Género</th>
                     <th>Contacto</th>
+                    <th>Cedula</th>
+                    <th>Email</th>
                     <th>Acciones</th>
                 </tr>
             </thead>
-            <tbody>
+            <tbody id="bodyTable">
                 <!-- Los pacientes se agregarán aquí -->
             </tbody>
         </table>
     </div>
-    
+
     <script>
-        document.addEventListener('DOMContentLoaded', () => {
-    const patientForm = document.getElementById('patientForm');
-    const patientsTableBody = document.getElementById('patientsTable').getElementsByTagName('tbody')[0];
-
-    let patients = [];
-
-    patientForm.addEventListener('submit', (event) => {
-        event.preventDefault();
-        
-        const patient = {
-            id: Date.now(),
-            patientName: event.target.patientName.value,
-            patientAge: event.target.patientAge.value,
-            patientGender: event.target.patientGender.value,
-            patientContact: event.target.patientContact.value
-        };
-
-        patients.push(patient);
-        event.target.reset();
-        renderPatients();
-    });
-
-    function renderPatients() {
-        patientsTableBody.innerHTML = '';
-
-        patients.forEach(patient => {
-            const row = document.createElement('tr');
-
-            row.innerHTML = `
-                <td>${patient.patientName}</td>
-                <td>${patient.patientAge}</td>
-                <td>${patient.patientGender}</td>
-                <td>${patient.patientContact}</td>
-                <td class="actions">
-                    <button class="edit" onclick="editPatient(${patient.id})">Editar</button>
-                    <button class="delete" onclick="deletePatient(${patient.id})">Eliminar</button>
-                </td>
-            `;
-
-            patientsTableBody.appendChild(row);
+        $(document).ready(function () {
+            cargarTabla();
         });
-    }
+        async function cargarTabla() {
 
-    window.editPatient = function(id) {
-        const patient = patients.find(pat => pat.id === id);
-        if (patient) {
-            document.getElementById('patientName').value = patient.patientName;
-            document.getElementById('patientAge').value = patient.patientAge;
-            document.getElementById('patientGender').value = patient.patientGender;
-            document.getElementById('patientContact').value = patient.patientContact;
+            $("#bodyTable").empty();
+            const doctors = await getDoctors(100);
+            console.log(doctors)
+            doctors.forEach(doctor => {
+                let filaHTML = `<tr id="row-id${doctor.id}"> 
+                <td>${doctor.name}</td>
+                <td>${doctor.last_name}</td>
+                <td>${doctor.age}</td>
+                <td>${doctor.gender}</td>
+                <td>${doctor.contact}</td>
+                <td>${doctor.cedula}</td>
+                <td>${doctor.user.email}</td>                 
+                <td> <button class="btn-eliminar" data-id="${doctor.id}">Eliminar</button></td>
+                </tr>`;
+                $("#bodyTable").append(filaHTML);
+            });
 
-            deletePatient(id);
+            $(".btn-eliminar").click(async function (event) {
+                const doctorId = $(this).data("id");
+                await deletedDoctor(doctorId);
+            });
         }
-    };
-
-    window.deletePatient = function(id) {
-        patients = patients.filter(pat => pat.id !== id);
-        renderPatients();
-    };
-});
-
     </script>
 </body>
+
 </html>

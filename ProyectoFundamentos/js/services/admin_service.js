@@ -187,6 +187,20 @@ const getPatients = async (limit) => {
 
 ////////////////////////////////
 //doctor
+const createDoctor = async (name, last_name, age, cedula, gender, contact, userId) => {
+    const query = `
+        mutation($input: NewDoctorInput!) {
+            createDoctor(input: $input) {
+                id
+                name
+            }
+        }      
+    `;
+    const input = {
+        name, last_name, age, cedula, gender, contact,userId
+    };
+    return await fetchAPI(query, input);
+}
 
 const getDoctors = async (limit) => {
     const query = `
@@ -196,7 +210,13 @@ const getDoctors = async (limit) => {
                     id
                     name 
                     last_name
+                    age
+                    gender
+                    contact
                     cedula
+                    user{
+                        email
+                    }
                 }
             }
         }
@@ -206,6 +226,18 @@ const getDoctors = async (limit) => {
     };
     const response = await fetchAPI(query, input);
     return response.data.doctors.items;
+};
+
+const deletedDoctor = async (deleteDoctorId) => {
+    const query = `
+            mutation DeleteDoctor($deleteDoctorId: ID!) {
+                deleteDoctor(id: $deleteDoctorId) {
+             id   
+            }
+        }
+    `;
+    const variables = { deleteDoctorId };
+    return await fetchAPIdelete(query, variables);
 };
 
 ////////////////////////////////
@@ -271,3 +303,31 @@ const getAppointment = async (limit) => {
     console.log(response)
     return response.data.citas.items;
 };
+
+///////////////
+//user
+
+const createUser = async (id, email, password, role) => {
+    const query = `
+        mutation($input: NewUserInput!) {
+            createUser(input: $input) {
+                id
+                email 
+                role
+                created_at
+            }
+        }      
+    `;
+    const input = {
+        id,
+        email,
+        password,
+        role,
+    };
+    try {
+        return await fetchAPI(query, input);
+    } catch (error) {
+        console.error('Error al crear asuario:', error);
+        throw error;
+    }
+}
