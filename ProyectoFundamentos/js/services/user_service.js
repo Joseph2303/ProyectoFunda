@@ -28,20 +28,45 @@ const createUser = async (id, email, password, role) => {
 }
 
 const getAdmins = async (limit) => {
-    const query = `
-        query{
-            users {
-                items {
-                    id                    
-                    email                  
+    try {
+        const query = `
+            query {
+                users {
+                    items {
+                        id
+                        email
+                    }
                 }
             }
+        `;
+        const input = { limit };
+        const response = await fetchAPI(query, input);
+
+        if (!response || !response.users || !response.users.items) {
+            console.error('Estructura de la respuesta inválida:', response);
+            throw new Error('Datos inválidos de la respuesta de la API');
         }
-    `;
-    const input = {
-        limit
-    };
-    return await fetchAPI(query, input);
+
+        saveDataToCache(urlAPI + "/getAdmins", response); // Guardar los datos en caché
+        return response.users.items;
+    } catch (error) {
+        console.error('Error al obtener los administradores desde internet:', error);
+
+        // Intentar obtener los datos del caché
+        try {
+            const cachedData = await getCachedData(urlAPI + "/getAdmins");
+            if (cachedData && cachedData.users && cachedData.users.items) {
+                console.log("Datos obtenidos del caché:", cachedData);
+                return cachedData.users.items;
+            } else {
+                console.error('No se encontraron datos en caché:', cachedData);
+                throw new Error('No se encontraron datos en caché');
+            }
+        } catch (cacheError) {
+            console.error('Error al obtener los administradores desde caché:', cacheError);
+            throw cacheError;
+        }
+    }
 };
 
 const updateAdmin = async (id, email, password, capture) => {

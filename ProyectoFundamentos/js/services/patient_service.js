@@ -37,34 +37,63 @@ const createPatient = async (nombre, apellidos, genero, edad, cedula, contacto, 
     return await fetchAPI(query, { input });
 };
 
-const getPatients = async () => {
-    const query = `
-        query {
-            patients {
-                items {
-                    id
-                    nombre
-                    apellidos
-                    genero
-                    edad
-                    cedula
-                    contacto
-                    user {
+const getPatients = async (limit) => {
+    try {
+        const query = `
+            query {
+                patients {
+                    items {
                         id
-                        email
-                        role
-                    }
-                    citas {
-                        id
-                        fecha
-                        motivo
+                        nombre
+                        apellidos
+                        genero
+                        edad
+                        cedula
+                        contacto
+                        user {
+                            id
+                            email
+                            role
+                        }
+                        citas {
+                            id
+                            fecha
+                            motivo
+                        }
                     }
                 }
             }
+        `;
+        const input = { limit };
+        const response = await fetchAPI(query, {});
+
+        if (!response || !response.patients || !response.patients.items) {
+            console.error('Estructura de la respuesta inválida:', response);
+            throw new Error('Datos inválidos de la respuesta de la API');
         }
-    `;
-    return await fetchAPI(query, {});
+
+        saveDataToCache(urlAPI + "/getPatients", response); // Guardar los datos en caché
+        return response.patients.items;
+    } catch (error) {
+        console.error('Error al obtener los pacientes desde internet:', error);
+
+        // Intentar obtener los datos del caché
+        try {
+            const cachedData = await getCachedData(urlAPI + "/getPatients");
+            if (cachedData && cachedData.patients && cachedData.patients.items) {
+                console.log("Datos obtenidos del caché:", cachedData);
+                return cachedData.patients.items;
+            } else {
+                console.error('No se encontraron datos en caché:', cachedData);
+                throw new Error('No se encontraron datos en caché');
+            }
+        } catch (cacheError) {
+            console.error('Error al obtener los pacientes desde caché:', cacheError);
+            throw cacheError;
+        }
+    }
 };
+
 
 const updatePatient = async (id, nombre, apellidos, genero, edad, cedula, contacto, userId) => {
     const query = `
@@ -137,10 +166,10 @@ const getAppointment = async (limit) => {
                         hour
                         status
                         doctor {
-                         id
-                         name
-                         last_name
-                         cedula
+                            id
+                            name
+                            last_name
+                            cedula
                         }
                     }
                 }
