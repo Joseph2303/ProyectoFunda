@@ -1,7 +1,7 @@
 const Authorization = "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJhQXN4ZXFzZXJmc2QiLCJlbWFpbCI6ImVkZGllckB1bmEuY3IiLCJuYW1lIjoiRWRkaWVyIiwiaWF0IjoxNzE3NjMwNTc4fQ.m_G6IiX7knD9hppJ5yVpP8KN6ggMoKY4_s3hnmL4CFU";
 const urlAPI = "http://localhost:9000/graphql"
 
-const createAppointment = async (name, date, hour, doctorId, patientId) => {
+const createAppointment = async (name, date, hour, status, doctorId, patientId) => {
     const query = `
         mutation($input: NewCitaInput!) {
             createCita(input: $input) {
@@ -12,7 +12,7 @@ const createAppointment = async (name, date, hour, doctorId, patientId) => {
         }      
     `;
     const input = {
-        name, date, hour, doctorId, patientId
+        name, date, hour, status, doctorId, patientId
     };
     return await fetchAPI(query, input);
 }

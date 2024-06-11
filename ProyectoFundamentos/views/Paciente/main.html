@@ -8,11 +8,13 @@
     <link rel="stylesheet" href="/ProyectoFundamentos/views/Paciente/pacienteMain.css">
     <link rel="icon" type="image/x-icon" href="/ProyectoFundamentos/Assets/icon/doctor.png">
     <script src="https://cdn.lordicon.com/lordicon.js"></script>
+    <script src="/ProyectoFundamentos/js/jquery.js"></script>
 </head>
 
 <body>
 
-    <lord-icon class="P" herf="#" src="https://cdn.lordicon.com/gwvmctbb.json" trigger="hover" id="logoutIcon">Cerrar Sesión</lord-icon>
+    <lord-icon class="P" herf="#" src="https://cdn.lordicon.com/gwvmctbb.json" trigger="hover" id="logoutIcon">Cerrar
+        Sesión</lord-icon>
     <br>
     <br>
     <div class="container">
@@ -56,7 +58,7 @@
             <div class="modal-body">
                 <p>El doctor puede aceptar o rechazar esta cita este pendiente de su estado en la tablas.</p>
                 <p>¿Estás seguro de que quieres confirmar esta cita?</p>
-                <button id="confirmButton" class="confirm-button">Confirmar</button>
+                <button onclick="updateCita(event)" id="confirmButton" class="confirm-button">Confirmar</button>
             </div>
         </div>
     </div>
@@ -94,39 +96,88 @@
     </div>
 
     <script>
-        // Obtener la ventana emergente (modal)
-        var modal = document.getElementById("myModal");
+        document.addEventListener("DOMContentLoaded", function () {
+            cargarTabla();
+            // Obtener la ventana emergente (modal)
+            var modal = document.getElementById("myModal");
 
-        // Obtener el botón que abre la ventana emergente
-        var checkboxes = document.querySelectorAll('.action-checkbox');
+            // Obtener el botón para cerrar la ventana emergente
+            var span = document.getElementsByClassName("close")[0];
 
-        // Obtener el botón para cerrar la ventana emergente
-        var span = document.getElementsByClassName("close")[0];
-
-        // Función para mostrar la ventana emergente cuando se marca el checkbox
-        checkboxes.forEach(function (checkbox) {
-            checkbox.addEventListener('change', function () {
-                if (this.checked) {
+            // Agregar evento de escucha al documento
+            document.addEventListener('click', function (event) {
+                if (event.target.classList.contains('action-checkbox')) {
+                    // Mostrar la ventana emergente
                     modal.style.display = "block";
-                } else {
-                    modal.style.display = "none";
                 }
+            });
+
+            // Función para cerrar la ventana emergente cuando se hace clic en el botón de cerrar
+            span.onclick = function () {
+                modal.style.display = "none";
+                // Deseleccionar todos los checkboxes
+                var checkboxes = document.querySelectorAll('.action-checkbox');
+                checkboxes.forEach(function (checkbox) {
+                    checkbox.checked = false;
+                });
+            };
+
+            // Función para confirmar la cita
+            document.getElementById("confirmButton").addEventListener('click', function () {
+                modal.style.display = "none";
             });
         });
 
-        // Función para cerrar la ventana emergente cuando se hace clic en el botón de cerrar
-        span.onclick = function () {
-            modal.style.display = "none";
+        // Función para cargar la tabla de citas
+        async function cargarTabla() {
+            $("#bodyTable").empty();
+            const citas = await getAppointment(100);
+            citas.forEach(cita => {
+                let filaHTML = `<tr id="row-id${cita.id}"> 
+            <td>${cita.doctor.name + ' ' + cita.doctor.last_name + ', Cedula:' + cita.doctor.cedula}</td> 
+            <td>${cita.name}</td>
+            <td>${cita.date}</td>
+            <td>${cita.hour}</td>
+            <td>${cita.status}</td>
+            <td><input data-doctorId="${cita.doctor.id}" data-name="${cita.name}" data-date="${cita.date}" data-hour="${cita.hour}" data-id="${cita.id}" type="checkbox" class="action-checkbox"></td>
+            </tr>`;
+                $("#bodyTable").append(filaHTML);
+            });
         }
 
-        // Función para confirmar la cita
-        document.getElementById("confirmButton").addEventListener('click', function () {
-            // Aquí puedes agregar la lógica para confirmar la cita
-            alert("Cita confirmada"); // Ejemplo de alerta, puedes reemplazarlo con tu lógica de confirmación real
-            modal.style.display = "none";
-        });
+        async function cargarCitasAprobadas() {
+            $("#bodyTable").empty();
+            const citas = await getAppointment(100);
+            citas.forEach(cita => {
+                let filaHTML = `<tr id="row-id${cita.id}"> 
+            <td>${cita.doctor.name + ' ' + cita.doctor.last_name + ', Cedula:' + cita.doctor.cedula}</td> 
+            <td>${cita.name}</td>
+            <td>${cita.date}</td>
+            <td>${cita.hour}</td>
+            <td>${cita.status}</td>
+            <td><input type="checkbox" class="action-checkbox"></td>
+            </tr>`;
+                $("#bodyTable").append(filaHTML);
+            });
+        }
 
+        async function cargarCitasRechazadas() {
+            $("#bodyTable").empty();
+            const citas = await getAppointment(100);
+            citas.forEach(cita => {
+                let filaHTML = `<tr id="row-id${cita.id}"> 
+            <td>${cita.doctor.name + ' ' + cita.doctor.last_name + ', Cedula:' + cita.doctor.cedula}</td> 
+            <td>${cita.name}</td>
+            <td>${cita.date}</td>
+            <td>${cita.hour}</td>
+            <td>${cita.status}</td>
+            <td><input type="checkbox" class="action-checkbox"></td>
+            </tr>`;
+                $("#bodyTable").append(filaHTML);
+            });
+        }
 
+        // Función para buscar en la tabla
         function searchTable() {
             var input, filter, table, tr, td, i, txtValue;
             input = document.getElementById("searchInput");
@@ -146,63 +197,27 @@
             }
         }
 
+
+    // Función para abrir la pantalla emergente de citas aprobadas
+    function openApprovedPopup() {
+        document.getElementById("popup-container").style.display = "block";
+        document.getElementById("Approved").style.display = "block";
+        document.getElementById("Rejected").style.display = "none";
+    }
+
+    // Función para abrir la pantalla emergente de citas rechazadas
+    function openRejectedPopup() {
+        document.getElementById("popup-container").style.display = "block";
+        document.getElementById("Approved").style.display = "none";
+        document.getElementById("Rejected").style.display = "block";
+    }
+    function closePopup() {
+        document.getElementById("popup-container").style.display = "none";
+    }
     </script>
 
-    <script>
-        // Función para abrir la pantalla emergente de citas aprobadas
-        function openApprovedPopup() {
-            document.getElementById("popup-container").style.display = "block";
-            document.getElementById("Approved").style.display = "block";
-            document.getElementById("Rejected").style.display = "none";
-        }
-
-        // Función para abrir la pantalla emergente de citas rechazadas
-        function openRejectedPopup() {
-            document.getElementById("popup-container").style.display = "block";
-            document.getElementById("Approved").style.display = "none";
-            document.getElementById("Rejected").style.display = "block";
-        }
-
-        // Función para cerrar la pantalla emergente
-        function closePopup() {
-            document.getElementById("popup-container").style.display = "none";
-        }
-
-        // Función para buscar en la tabla
-        function searchTable(tabName) {
-            // Código de búsqueda aquí
-        }
-
-        $(document).ready(function () {
-            getDoctores();
-            cargarTabla();
-        });
-
-        async function cargarTabla() {
-            $("#bodyTable").empty();
-            const citas = await getAppointment(100);
-            citas.forEach(cita => {
-                let filaHTML = `<tr id="row-id${cita.id}"> 
-            <td>${cita.name}</td>
-            <td>${cita.date}</td>
-            <td>${cita.hour}</td>
-            <td>${cita.doctor.name + ' ' + cita.doctor.last_name + ', Cedula:' + cita.doctor.cedula}</td> 
-            <td><input type="checkbox" class="action-checkbox"></td>
-            </tr>`;
-                $("#bodyTable").append(filaHTML);
-            });
-
-            $(".btn-eliminar").click(async function (event) {
-                const citaId = $(this).data("id");
-                await deleteAppointment(citaId);
-            });
-        }
-    </script>
-
-    <script src="/ProyectoFundamentos/js/jquery.js"></script>
     <script src="/ProyectoFundamentos/js/services/patient_service.js"></script>
     <script src="/ProyectoFundamentos/js/app.js"></script>
-    <script src="/ProyectoFundamentos/js/ws.js"></script>
     <script src="/ProyectoFundamentos/views/logout.js" defer></script>
 
 </body>

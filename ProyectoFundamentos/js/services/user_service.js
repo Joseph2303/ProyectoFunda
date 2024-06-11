@@ -151,6 +151,12 @@ async function login(email, password) {
         const data = await response.json();
         const token = data.token;
         localStorage.setItem('token', token); 
+        localStorage.setItem('user', JSON.stringify(data.user) );
+        if (data.user.role === 'Paciente') {
+            localStorage.setItem('patient', JSON.stringify(data.patientInfo));
+        } else if (data.user.role === 'Doctor') {
+            localStorage.setItem('doctor', JSON.stringify(data.doctorInfo));
+        } 
         console.log('Login exitoso', token);
         console.log('Datos del usuario:', data.user.role);
         if(data.user.role == 'Paciente'){
