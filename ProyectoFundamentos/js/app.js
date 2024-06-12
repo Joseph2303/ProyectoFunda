@@ -174,7 +174,8 @@ async function updateCita(event) {
         citaId = checkbox.getAttribute('data-id');
         patientId = JSON.parse(localStorage.getItem('patient')).id;
     } else if (user.role === 'Doctor') {
-        citaId = event.target.dataset.id;
+        const btn = document.getElementById('btn-acept');
+        citaId = btn.getAttribute('data-id');
         patientId = event.target.dataset.patientId;
         if (!patientId) {
             console.error('Error: No se pudo obtener el ID del paciente');

@@ -209,7 +209,7 @@ const getAppointment = async (limit) => {
 
 
 
-const updateAppointment = async (id, doctorId, status) => {
+const updateAppointment = async (id, patientId, status) => {
     const query = `
         mutation UpdateCita($input: CitaInput!) {
             updateCita(input: $input) {
@@ -219,7 +219,7 @@ const updateAppointment = async (id, doctorId, status) => {
         }
     `;
     const variables = {
-        input: {id,  doctorId, status }
+        input: {id,  patientId, status }
     };
     return await fetchAPI(query, variables);
 };
