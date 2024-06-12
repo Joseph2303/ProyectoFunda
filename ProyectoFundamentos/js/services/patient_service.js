@@ -205,7 +205,73 @@ const getAppointment = async (limit) => {
     }
 };
 
+const getAppointmentAcept = async (patientId) => {
+    const query = `
+        query CitasAceptadasPatientId($patientId: ID!) {
+            citasAceptadasPatientId(patientId: $patientId) {
+                               
+                id
+                name 
+                date
+                hour
+                status
+                doctor {
+                     id
+                     name
+                     last_name
+                     cedula
+                }
+                patient {
+                     id
+                     name
+                     last_name
+                     cedula
+                }
+                
+            }
+        }
+    `;
+    const variables  = {
+        patientId
+    };
+    const response = await fetchAPI2(query, variables );
+    console.log(response)
+    return response.data.citasAceptadasPatientId;
+};
 
+const getAppointmentReject = async (patientId) => {
+    const query = `
+        query Doctor($patientId: ID!) {
+            citasRechazadasPatientId(patientId: $patientId) {
+                               
+                id
+                name 
+                date
+                hour
+                status
+                doctor {
+                     id
+                     name
+                     last_name
+                     cedula
+                }
+                patient {
+                     id
+                     name
+                     last_name
+                     cedula
+                }
+                
+            }
+        }
+    `;
+    const variables  = {
+        patientId
+    };
+    const response = await fetchAPI2(query, variables );
+    console.log(response)
+    return response.data.citasRechazadasPatientId;
+};
 
 const updateAppointment = async (id, patientId, status) => {
     const query = `
@@ -221,3 +287,30 @@ const updateAppointment = async (id, patientId, status) => {
     };
     return await fetchAPI(query, variables);
 };
+
+
+const fetchAPI2 = async (query, variables ) => {
+    const options = {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            Authorization
+        },
+        body: JSON.stringify({
+            query,
+            variables       
+        })
+    };
+    try {
+        const result = await fetch(urlAPI, options);
+        const data = await result.json();
+        if (data.errors) {
+            cargarTabla();
+            throw new Error(data.errors[0].message);
+        }
+        return data;
+    } catch (error) {
+        console.error('Error en la solicitud GraphQL:', error);
+        throw new Error('Error en la solicitud GraphQL. Por favor, inténtalo de nuevo más tarde.');
+    }
+}

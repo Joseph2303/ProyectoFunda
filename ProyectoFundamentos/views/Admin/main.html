@@ -1,14 +1,17 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Administrador</title>
     <link rel="stylesheet" href="/ProyectoFundamentos/views/Admin/Style/main.css">
     <link rel="icon" type="image/x-icon" href="/ProyectoFundamentos/Assets/icon/doctor.png">
+    <link rel="stylesheet" href="/ProyectoFundamentos/views/Login/messagesInfo.css">
+    <script src="/MessagesInfo.js"></script>
 
     <style>
-         .container {
+        .container {
             max-width: 800px;
             margin: 50px auto;
             padding: 20px;
@@ -19,19 +22,20 @@
     </style>
 
 </head>
+
 <body>
     <div class="menu">
         <ion-icon name="menu-outline"></ion-icon>
         <ion-icon name="close-outline"></ion-icon>
     </div>
-    
+
     <div class="barra-lateral">
         <div>
             <spans>Administrador</span>
-            <div class="nombre-pagina">
-                <ion-icon id="cloud" name="reader-outline"></ion-icon>
-                <span>Hospital</span>
-            </div>
+                <div class="nombre-pagina">
+                    <ion-icon id="cloud" name="reader-outline"></ion-icon>
+                    <span>Hospital</span>
+                </div>
         </div>
 
         <nav class="navegacion">
@@ -60,18 +64,6 @@
                         <span>Citas</span>
                     </a>
                 </li>
-                <li>
-                    <a id="CitasDoctor" href="#">
-                        <ion-icon name="id-card-outline"></ion-icon>
-                        <span>Citas de Doctores</span>
-                    </a>
-                </li>
-                <li>
-                    <a id="citaspaciente" href="#">
-                        <ion-icon name="people-outline"></ion-icon>
-                        <span>Citas de Pacientes</span>
-                    </a>
-                </li>
                 <br>
                 <br>
                 <br>
@@ -95,7 +87,7 @@
                 <div class="switch">
                     <div class="base">
                         <div class="circulo">
-                            
+
                         </div>
                     </div>
                 </div>
@@ -116,7 +108,11 @@
         </center>
         <div class="container">
             <p>
-                El perfil de administrador tiene la responsabilidad de gestionar las citas médicas, los pacientes y la asignación de pacientes a los doctores dentro del sistema. Esto implica la capacidad de agregar nuevas citas, registrar información de los pacientes y asignarlos a los médicos disponibles. El administrador actúa como el enlace crucial entre los pacientes y los profesionales de la salud, asegurando una gestión eficiente y ordenada de las citas y los recursos del hospital.
+                El perfil de administrador tiene la responsabilidad de gestionar las citas médicas, los pacientes y la
+                asignación de pacientes a los doctores dentro del sistema. Esto implica la capacidad de agregar nuevas
+                citas, registrar información de los pacientes y asignarlos a los médicos disponibles. El administrador
+                actúa como el enlace crucial entre los pacientes y los profesionales de la salud, asegurando una gestión
+                eficiente y ordenada de las citas y los recursos del hospital.
             </p>
         </div>
 
@@ -132,4 +128,5 @@
     <script src="/ProyectoFundamentos/js/app.js"></script>
     <script src="/ProyectoFundamentos/views/logout.js" defer></script>
 </body>
+
 </html>

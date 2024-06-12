@@ -138,7 +138,6 @@ async function getDatesForms(event) {
         try {
             login(_email, _password);
         } catch (error) {
-            mostrarMensajeDeError('Error al iniciar sesion')
             console.error('Error al iniciar sesion:', error);
         }
     } else if (email) {
@@ -148,7 +147,6 @@ async function getDatesForms(event) {
            
             console.log('Paciente y usuario creados exitosamente');
         } catch (error) {
-            mostrarMensajeDeError('Error al crear usuario o paciente:')
             console.error('Error al crear usuario o paciente:', error);
         }
     }
@@ -174,16 +172,16 @@ async function updateCita(event) {
         citaId = checkbox.getAttribute('data-id');
         patientId = JSON.parse(localStorage.getItem('patient')).id;
     } else if (user.role === 'Doctor') {
-        const btn = document.getElementById('btn-acept');
+        const btn = event.target;
         citaId = btn.dataset.id;
         patientId = btn.dataset.patientId;
         if (!patientId) {
             console.error('Error: No se pudo obtener el ID del paciente');
             return;
         }
-        if (event.target.id === "btn-acept") {
+        if (btn.classList.contains("btn-aceptar")) {
             status = 'Aceptado';
-        } else if (event.target.id === "btn-reject") {
+        } else if (btn.classList.contains("btn-rechazar")) {
             status = 'Rechazado';
         } else {
             console.error('Error: No se pudo determinar la acción (aceptar/rechazar)');
@@ -199,7 +197,6 @@ async function updateCita(event) {
         if (updated) {
             alert(`Cita actualizada a ${status}`);
             cargarTabla();
-            document.getElementById("myModal").style.display = "none";
         } else {
             alert("Error al actualizar la cita");
         }
@@ -208,6 +205,7 @@ async function updateCita(event) {
         console.error('Error :', error);
     }
 }
+
 
 ///////////////////
 //cita

@@ -23,7 +23,7 @@
         </center>
         <div class="container1">
             <div class="search-container">
-                <input type="text" id="searchInput" onkeyup="searchTable()" placeholder="Buscar citas...">
+                <input type="text" id="buscarCita" onkeyup="filtrar()" placeholder="Buscar citas...">
             </div>
             <button class="open-popup-btn" onclick="openApprovedPopup()">Abrir citas aprobadas</button>
 
@@ -72,7 +72,7 @@
                 <h3>Citas Aprobadas</h3>
                 <div class="container1">
                     <div class="search-container">
-                        <input type="text" id="searchInputApproved" onkeyup="searchTable('Approved')"
+                        <input type="text" id="buscarCitaRechazadas" oninput="filtrarRechazadas()"
                             placeholder="Buscar citas aprobadas...">
                     </div>
                     <table id="appointmentsTableApproved">
@@ -84,10 +84,9 @@
                                 <th>Fecha</th>
                                 <th>Hora</th>
                                 <th>Estado</th>
-                                <th>Acciones</th>
                             </tr>
                         </thead>
-                        <tbody id="bodyTable">
+                        <tbody id="bodyTableApproved">
                             <!-- Agrega más filas según sea necesario -->
                         </tbody>
                     </table>
@@ -97,23 +96,22 @@
                 <h3>Citas Rechazadas</h3>
                 <div class="container1">
                     <div class="search-container">
-                        <input type="text" id="searchInputRejected" onkeyup="searchTable('Rejected')"
+                        <input type="text" id="buscarCitaAceptadas" onkeyup="filtrarAceptadas()"
                             placeholder="Buscar citas rechazadas...">
                     </div>
                     <table id="appointmentsTableRejected">
-                            <thead>
-                                <tr>
-                                    <th>Doctor</th>
-                                    <th>tipo de Cita</th>
-                                    <th>Fecha</th>
-                                    <th>Hora</th>
-                                    <th>Estado</th>
-                                    <th>Acciones</th>
-                                </tr>
-                            </thead>
-                            <tbody id="bodyTable">
-                                <!-- Agrega más filas según sea necesario -->
-                            </tbody>
+                        <thead>
+                            <tr>
+                                <th>Doctor</th>
+                                <th>tipo de Cita</th>
+                                <th>Fecha</th>
+                                <th>Hora</th>
+                                <th>Estado</th>
+                            </tr>
+                        </thead>
+                        <tbody id="bodyTableRejected">
+                            <!-- Agrega más filas según sea necesario -->
+                        </tbody>
                     </table>
                 </div>
             </div>
@@ -122,38 +120,32 @@
 
     <script>
         document.addEventListener("DOMContentLoaded", function () {
+            cargarCitasRechazadas()
             cargarTabla();
-            // Obtener la ventana emergente (modal)
+            cargarCitasAprobadas();
             var modal = document.getElementById("myModal");
 
-            // Obtener el botón para cerrar la ventana emergente
             var span = document.getElementsByClassName("close")[0];
 
-            // Agregar evento de escucha al documento
             document.addEventListener('click', function (event) {
                 if (event.target.classList.contains('action-checkbox')) {
-                    // Mostrar la ventana emergente
                     modal.style.display = "block";
                 }
             });
 
-            // Función para cerrar la ventana emergente cuando se hace clic en el botón de cerrar
             span.onclick = function () {
                 modal.style.display = "none";
-                // Deseleccionar todos los checkboxes
                 var checkboxes = document.querySelectorAll('.action-checkbox');
                 checkboxes.forEach(function (checkbox) {
                     checkbox.checked = false;
                 });
             };
 
-            // Función para confirmar la cita
             document.getElementById("confirmButton").addEventListener('click', function () {
                 modal.style.display = "none";
             });
         });
 
-        // Función para cargar la tabla de citas
         async function cargarTabla() {
             $("#bodyTable").empty();
             const citas = await getAppointment(100);
@@ -164,15 +156,18 @@
             <td>${cita.date}</td>
             <td>${cita.hour}</td>
             <td>${cita.status}</td>
-            <td><input data-doctorId="${cita.doctor.id}" data-name="${cita.name}" data-date="${cita.date}" data-hour="${cita.hour}" data-id="${cita.id}" type="checkbox" class="action-checkbox"></td>
+            <td><input data-doctorId="${cita.doctor.id}" data-name="${cita.name}" data-date="${cita.date}" data-hour="${cita.hour}" data-id="${cita.id}" type="checkbox" class="action-checkbox" ${cita.status === 'Aceptado' || cita.status === 'Rechazado' ? 'disabled' : ''}></td>
             </tr>`;
                 $("#bodyTable").append(filaHTML);
             });
         }
 
         async function cargarCitasAprobadas() {
-            $("#bodyTable").empty();
-            const citas = await getAppointment(100);
+
+            $("#bodyTableApproved").empty();
+            const paciente =JSON.parse(localStorage.getItem("patient")) 
+            const citas = await getAppointmentAcept(paciente.id);
+            console.log(citas)
             citas.forEach(cita => {
                 let filaHTML = `<tr id="row-id${cita.id}"> 
             <td>${cita.doctor.name + ' ' + cita.doctor.last_name + ', Cedula:' + cita.doctor.cedula}</td> 
@@ -180,16 +175,18 @@
             <td>${cita.date}</td>
             <td>${cita.hour}</td>
             <td>${cita.status}</td>
-            <td><input type="checkbox" class="action-checkbox"></td>
             </tr>`;
-                $("#bodyTable").append(filaHTML);
+                $("#bodyTableApproved").append(filaHTML);
             });
+
         }
 
         async function cargarCitasRechazadas() {
-            
-            $("#bodyTable").empty();
-            const citas = await getAppointment(100);
+
+            $("#bodyTableRejected").empty();
+            const paciente =JSON.parse(localStorage.getItem("patient")) 
+            const citas = await getAppointmentReject(paciente.id);
+            console.log(citas)
             citas.forEach(cita => {
                 let filaHTML = `<tr id="row-id${cita.id}"> 
             <td>${cita.doctor.name + ' ' + cita.doctor.last_name + ', Cedula:' + cita.doctor.cedula}</td> 
@@ -197,47 +194,20 @@
             <td>${cita.date}</td>
             <td>${cita.hour}</td>
             <td>${cita.status}</td>
-            <td><input type="checkbox" class="action-checkbox"></td>
             </tr>`;
-                $("#bodyTable").append(filaHTML);
+                $("#bodyTableRejected").append(filaHTML);
             });
 
-            citas.forEach(cita => {
-                if (cita.status === "Aceptada") {
-                    $(`#row-id${cita.id} .action-checkbox`).prop("disabled", true);
-                }
-            });
-        }
-
-        // Función para buscar en la tabla
-        function searchTable() {
-            var input, filter, table, tr, td, i, txtValue;
-            input = document.getElementById("searchInput");
-            filter = input.value.toUpperCase();
-            table = document.getElementById("appointmentsTable");
-            tr = table.getElementsByTagName("tr");
-            for (i = 0; i < tr.length; i++) {
-                td = tr[i].getElementsByTagName("td")[0]; // Buscar en la primera columna (Doctor)
-                if (td) {
-                    txtValue = td.textContent || td.innerText;
-                    if (txtValue.toUpperCase().indexOf(filter) > -1) {
-                        tr[i].style.display = "";
-                    } else {
-                        tr[i].style.display = "none";
-                    }
-                }
-            }
         }
 
 
-        // Función para abrir la pantalla emergente de citas aprobadas
         function openApprovedPopup() {
             document.getElementById("popup-container").style.display = "block";
             document.getElementById("Approved").style.display = "block";
             document.getElementById("Rejected").style.display = "none";
+
         }
 
-        // Función para abrir la pantalla emergente de citas rechazadas
         function openRejectedPopup() {
             document.getElementById("popup-container").style.display = "block";
             document.getElementById("Approved").style.display = "none";
@@ -246,6 +216,81 @@
         function closePopup() {
             document.getElementById("popup-container").style.display = "none";
         }
+
+        var tabla = document.getElementById("appointmentsTable");
+        var tablaAcep = document.getElementById("appointmentsTableRejected");
+        var tablaRech = document.getElementById("appointmentsTableApproved");
+
+        function filtrar() {
+            var inputBusqueda = document.getElementById('buscarCita');
+            var filtro = inputBusqueda.value.toUpperCase();
+
+            var filas = tabla.getElementsByTagName('tr');
+
+            for (var i = 0; i < filas.length; i++) {
+                if (filas[i].getElementsByTagName('th').length === 0) {
+                    var celdas = filas[i].getElementsByTagName('td');
+                    var mostrarFila = false;
+
+                    for (var j = 0; j < celdas.length; j++) {
+                        var textoCelda = celdas[j].textContent || celdas[j].innerText;
+                        if (textoCelda.toUpperCase().indexOf(filtro) > -1) {
+                            mostrarFila = true;
+                            break;
+                        }
+                    }
+
+                    filas[i].style.display = mostrarFila ? '' : 'none';
+                }
+            }
+        }
+        function filtrarAceptadas() {
+            var inputBusqueda = document.getElementById('buscarCitaAceptadas');
+            var filtro = inputBusqueda.value.toUpperCase();
+
+            var filas = tablaAcep.getElementsByTagName('tr');
+
+            for (var i = 0; i < filas.length; i++) {
+                if (filas[i].getElementsByTagName('th').length === 0) {
+                    var celdas = filas[i].getElementsByTagName('td');
+                    var mostrarFila = false;
+
+                    for (var j = 0; j < celdas.length; j++) {
+                        var textoCelda = celdas[j].textContent || celdas[j].innerText;
+                        if (textoCelda.toUpperCase().indexOf(filtro) > -1) {
+                            mostrarFila = true;
+                            break;
+                        }
+                    }
+
+                    filas[i].style.display = mostrarFila ? '' : 'none';
+                }
+            }
+        }
+        function filtrarRechazadas() {
+            var inputBusqueda = document.getElementById('buscarCitaRechazadas');
+            var filtro = inputBusqueda.value.toUpperCase();
+
+            var filas = tablaRech.getElementsByTagName('tr');
+
+            for (var i = 0; i < filas.length; i++) {
+                if (filas[i].getElementsByTagName('th').length === 0) {
+                    var celdas = filas[i].getElementsByTagName('td');
+                    var mostrarFila = false;
+
+                    for (var j = 0; j < celdas.length; j++) {
+                        var textoCelda = celdas[j].textContent || celdas[j].innerText;
+                        if (textoCelda.toUpperCase().indexOf(filtro) > -1) {
+                            mostrarFila = true;
+                            break;
+                        }
+                    }
+
+                    filas[i].style.display = mostrarFila ? '' : 'none';
+                }
+            }
+        }
+
     </script>
 
     <script src="/ProyectoFundamentos/js/services/patient_service.js"></script>
