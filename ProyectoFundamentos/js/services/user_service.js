@@ -1,5 +1,4 @@
 const Authorization = "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJhQXN4ZXFzZXJmc2QiLCJlbWFpbCI6ImVkZGllckB1bmEuY3IiLCJuYW1lIjoiRWRkaWVyIiwiaWF0IjoxNzE3NjMwNTc4fQ.m_G6IiX7knD9hppJ5yVpP8KN6ggMoKY4_s3hnmL4CFU";
-
 const urlAPI = "http://localhost:9000/graphql"
 
 const createUser = async (id, email, password, role) => {
@@ -63,14 +62,17 @@ const getAdmins = async (limit) => {
         `;
         const input = { limit };
         const response = await fetchAPI(query, input);
+
         if (!response || !response.users || !response.users.items) {
             console.error('Estructura de la respuesta inválida:', response);
             throw new Error('Datos inválidos de la respuesta de la API');
         }
+
         saveDataToCache(urlAPI + "/getAdmins", response); // Guardar los datos en caché
         return response.users.items;
     } catch (error) {
         console.error('Error al obtener los administradores desde internet:', error);
+
         // Intentar obtener los datos del caché
         try {
             const cachedData = await getCachedData(urlAPI + "/getAdmins");
@@ -102,6 +104,18 @@ const updateAdmin = async (id, email, password, capture) => {
     const variables = {
         input: { id, email, password, capture }
     };
+    return await fetchAPI(query, variables);
+};
+
+const deleteAdmin = async (id) => {
+    const query = `
+        mutation($id: ID!) {
+            deleteAdmin(id: $id) {
+                id
+            }
+        }
+    `;
+    const variables = { id };
     return await fetchAPI(query, variables);
 };
 
@@ -157,27 +171,7 @@ const createPatient = async (name, last_name, age, cedula, gender, contact, user
     };
     console.log(input)
     try {
-        if (navigator.onLine) {      
-            return await fetchAPI(query, input);
-        } else {
-            const operation = { type: 'createPaciente', payload: { name, last_name, age, cedula, gender, contact, userId} };
-            await savePendingOperation(operation);
-            const message = `Operación pendiente guardada. Se realizará cuando haya conexión. Datos: ${JSON.stringify(operation)}`;
-            
-            if ('Notification' in window && Notification.permission === 'granted') {
-                new Notification(message);
-            } else if ('Notification' in window && Notification.permission !== 'denied') {
-                Notification.requestPermission().then(function(permission) {
-                    if (permission === 'granted') {
-                        new Notification(message);
-                    }
-                });
-            } else {
-                console.error('Las notificaciones no están permitidas.');
-            }
-    
-            throw new Error('No hay conexión a Internet. La operación se realizará cuando haya conexión.');
-        }
+        return await fetchAPI(query, input);
     } catch (error) {
         console.error('Error al crear paciente:', error);
         throw error;
