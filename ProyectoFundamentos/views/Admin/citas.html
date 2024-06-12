@@ -137,6 +137,9 @@
             <br>
 
             <h2>Lista de Citas</h2>
+            <div class="search-container">
+                <input type="text" id="buscarCita" onkeyup="filtrar()" placeholder="Buscar citas...">
+            </div>
             <table id="appointmentsTable">
                 <thead>
                     <tr>
@@ -145,6 +148,7 @@
                         <th>Hora</th>
                         <th>Doctor</th>
                         <th>Paciente</th>
+                        <th>Estado</th>
                         <th>Acciones</th>
                     </tr>
                 </thead>
@@ -171,6 +175,7 @@
                 <td>${cita.hour}</td>
                 <td>${cita.doctor.name + ' ' + cita.doctor.last_name + ', Cedula:' + cita.doctor.cedula}</td> 
                 <td>${paciente}</td>
+                <td>${cita.status}</td>
                 <td><button class="btn-eliminar" data-id="${cita.id}">Eliminar</button></td>
                 </tr>`;
                 $("#bodyTable").append(filaHTML);
@@ -180,6 +185,33 @@
                 const citaId = $(this).data("id");
                 await deleteAppointment(citaId);
             });
+        }
+
+        
+        var tabla = document.getElementById("appointmentsTable");
+
+        function filtrar() {
+            var inputBusqueda = document.getElementById('buscarCita');
+            var filtro = inputBusqueda.value.toUpperCase();
+
+            var filas = tabla.getElementsByTagName('tr');
+
+            for (var i = 0; i < filas.length; i++) {
+                if (filas[i].getElementsByTagName('th').length === 0) {
+                    var celdas = filas[i].getElementsByTagName('td');
+                    var mostrarFila = false;
+
+                    for (var j = 0; j < celdas.length; j++) {
+                        var textoCelda = celdas[j].textContent || celdas[j].innerText;
+                        if (textoCelda.toUpperCase().indexOf(filtro) > -1) {
+                            mostrarFila = true;
+                            break;
+                        }
+                    }
+
+                    filas[i].style.display = mostrarFila ? '' : 'none';
+                }
+            }
         }
     </script>
 

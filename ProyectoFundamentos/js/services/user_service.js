@@ -137,6 +137,7 @@ const fetchAPI = async (query, input) => {
         const result = await fetch(urlAPI, options);
         const data = await result.json();
         if (data.errors) {
+            mostrarMensajeDeError('Error, verifique sus datos')
             throw new Error(data.errors[0].message);
         }
         return data;
@@ -191,6 +192,7 @@ async function login(email, password) {
         });
 
         if (!response.ok) {
+            mostrarMensajeDeError('Error al iniciar sesion, verifique sus datos')
             throw new Error('Login fallido');
         }
 
