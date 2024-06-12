@@ -148,8 +148,6 @@ const fetchAPI = async (query, variables) => {
         },
         body: JSON.stringify({ query, variables })
     });
-    console.log(variables)
-    console.log(response)
     const data = await response.json();
     return data.data;
 };

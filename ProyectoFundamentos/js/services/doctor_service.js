@@ -126,11 +126,14 @@ const fetchAPI = async (query, input) => {
         })
     };
     try {
+        console.log("hola"+ input.input)
+        console.log(options)
         const result = await fetch(urlAPI, options);
         const data = await result.json();
         if (data.errors) {
             throw new Error(data.errors[0].message);
         }
+
         return data;
     } catch (error) {
         console.error('Error en la solicitud GraphQL:', error);
@@ -186,9 +189,8 @@ const updateAppointment = async (id,  patientId, status) => {
         }
     `;
     const variables = {
-        input: {id, patientId, status }
+         id, patientId, status 
     };
-    console.log(variables)
     return await fetchAPI(query, variables);
 };
 

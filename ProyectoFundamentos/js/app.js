@@ -161,7 +161,7 @@ async function updateCita(event) {
     event.preventDefault();
     const user = JSON.parse(localStorage.getItem('user'));
     let patientId = '';
-    let citaId;
+    let citaId = '';
     let status = '';
 
     if (user.role === 'Paciente') {
@@ -175,8 +175,8 @@ async function updateCita(event) {
         patientId = JSON.parse(localStorage.getItem('patient')).id;
     } else if (user.role === 'Doctor') {
         const btn = document.getElementById('btn-acept');
-        citaId = btn.getAttribute('data-id');
-        patientId = event.target.dataset.patientId;
+        citaId = btn.dataset.id;
+        patientId = btn.dataset.patientId;
         if (!patientId) {
             console.error('Error: No se pudo obtener el ID del paciente');
             return;
@@ -189,18 +189,17 @@ async function updateCita(event) {
             console.error('Error: No se pudo determinar la acción (aceptar/rechazar)');
             return;
         }
-    }else {
+    } else {
         console.error('Error: Rol de usuario no válido');
         return;
     }
-
 
     try {
         const id = citaId.toString();
 
         const updated = await updateAppointment(id, patientId, status);
         if (updated) {
-            alert("Cita actualizada a Pendiente");
+            alert(`Cita actualizada a ${status}`);
             cargarTabla();
             document.getElementById("myModal").style.display = "none";
         } else {
@@ -210,9 +209,8 @@ async function updateCita(event) {
     } catch (error) {
         console.error('Error :', error);
     }
-
-
 }
+
 ///////////////////
 //cita
 async function getDoctores() {
