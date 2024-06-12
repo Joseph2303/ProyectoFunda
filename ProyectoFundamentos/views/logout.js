@@ -1,5 +1,7 @@
 function logout() {
     localStorage.removeItem('token');
+    localStorage.removeItem('patient');
+    localStorage.removeItem('user');
     window.location.href = '/ProyectoFundamentos/views/Login/login.html'; 
 }
 
