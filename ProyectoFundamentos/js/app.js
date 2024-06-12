@@ -138,14 +138,17 @@ async function getDatesForms(event) {
         try {
             login(_email, _password);
         } catch (error) {
+            mostrarMensajeDeError('Error al iniciar sesion')
             console.error('Error al iniciar sesion:', error);
         }
     } else if (email) {
         try {
             const user = await createUser(0, email, password, 'Paciente');
             await createPatient(name, last_name, age, cedula, gender, contact, user.data.createUser.id);
+           
             console.log('Paciente y usuario creados exitosamente');
         } catch (error) {
+            mostrarMensajeDeError('Error al crear usuario o paciente:')
             console.error('Error al crear usuario o paciente:', error);
         }
     }
@@ -156,13 +159,45 @@ async function getDatesForms(event) {
 
 async function updateCita(event) {
     event.preventDefault();
-    const patientId = JSON.parse(localStorage.getItem('patient')).id;
-    const checkbox = document.querySelector('.action-checkbox:checked');
-    const id = checkbox.getAttribute('data-id');
+    const user = JSON.parse(localStorage.getItem('user'));
+    let patientId = '';
+    let citaId;
+    let status = '';
+
+    if (user.role === 'Paciente') {
+        status = 'Pendiente';
+        const checkbox = document.querySelector('.action-checkbox:checked');
+        if (!checkbox) {
+            console.error('Error: Debe seleccionar una cita');
+            return;
+        }
+        citaId = checkbox.getAttribute('data-id');
+        patientId = JSON.parse(localStorage.getItem('patient')).id;
+    } else if (user.role === 'Doctor') {
+        citaId = event.target.dataset.id;
+        patientId = event.target.dataset.patientId;
+        if (!patientId) {
+            console.error('Error: No se pudo obtener el ID del paciente');
+            return;
+        }
+        if (event.target.id === "btn-acept") {
+            status = 'Aceptado';
+        } else if (event.target.id === "btn-rechazar") {
+            status = 'Rechazado';
+        } else {
+            console.error('Error: No se pudo determinar la acción (aceptar/rechazar)');
+            return;
+        }
+    }else {
+        console.error('Error: Rol de usuario no válido');
+        return;
+    }
+
 
     try {
+        const id = citaId.toString();
 
-        const updated = await updateAppointment(id, patientId, 'Pendiente');
+        const updated = await updateAppointment(id, patientId, status);
         if (updated) {
             alert("Cita actualizada a Pendiente");
             cargarTabla();
@@ -177,7 +212,6 @@ async function updateCita(event) {
 
 
 }
-
 ///////////////////
 //cita
 async function getDoctores() {
