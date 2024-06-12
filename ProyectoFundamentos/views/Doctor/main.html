@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Perfil de Doctor</title>
+    <link rel="stylesheet" href="/ProyectoFundamentos/views/Doctor/doctorMain.css">
+    <link rel="icon" type="image/x-icon" href="/ProyectoFundamentos/Assets/icon/doctor.png">
+    <link rel="stylesheet" href="/ProyectoFundamentos/views/Login/messagesInfo.css">
+    <script src="https://cdn.lordicon.com/lordicon.js"></script>
+    <script src="/ProyectoFundamentos/js/jquery.js"></script>
+    <script src="/MessagesInfo.js"></script>
+
+</head>
+
+<body>
+
+    <lord-icon class="P" herf="#" src="https://cdn.lordicon.com/gwvmctbb.json" trigger="hover" id="logoutIcon">Cerrar
+        Sesión
+    </lord-icon>
+    <br>
+    <br>
+    <div class="container">
+        <center>
+            <h1 style="color: rgb(255, 255, 255);">Perfil de Doctor</h1>
+        </center>
+        <div class="container1">
+            <h2 style=" color: rgb(0, 0, 0);">Lista de Citas</h2>
+            <div class="search-container">
+                <input type="text" id="buscarCita" onkeyup="filtrar()" placeholder="Buscar citas...">
+            </div>
+            <table id="appointmentsTable">
+                <thead>
+                    <tr>
+                        <th>Cita</th>
+                        <th>Fecha</th>
+                        <th>Hora</th>
+                        <th>Doctor</th>
+                        <th>Paciente</th>
+                        <th>Estado</th>
+                        <th>Acciones</th>
+                    </tr>
+                </thead>
+                <tbody id="bodyTable">
+
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <script>
+        $(document).ready(function () {
+            cargarTabla();
+        });
+        async function cargarTabla() {
+
+            $("#bodyTable").empty();
+            const doctor = JSON.parse(localStorage.getItem("doctor"))
+            const citas = await getAppointmentByDoctor(doctor.id);
+            console.log(citas)
+            citas.forEach(cita => {
+                let paciente = cita.patient ? `${cita.patient.name} ${cita.patient.last_name}, Cedula: ${cita.patient.cedula}` : 'Pendiente';
+                let filaHTML = `<tr id="row-id${cita.id}"> 
+                <td>${cita.name}</td>
+                <td>${cita.date}</td>
+                <td>${cita.hour}</td>
+                <td>${cita.doctor.name + ' ' + cita.doctor.last_name + ', Cedula:' + cita.doctor.cedula}</td> 
+                <td>${paciente}</td>    
+                <td>${cita.status}</td>        
+                <td>
+                        <button onclick="updateCita(event)" class="btn-aceptar" data-id="${cita.id}" data-patient-id="${cita.patient ? cita.patient.id : ''}" ${cita.status === 'Aceptado' || cita.status === 'Rechazado' || cita.status === 'Disponible' ? 'disabled' : ''}>Aceptar</button>
+                        <button onclick="updateCita(event)" class="btn-rechazar" data-id="${cita.id}" data-patient-id="${cita.patient ? cita.patient.id : ''}" ${cita.status === 'Aceptado' || cita.status === 'Rechazado' || cita.status === 'Disponible' ? 'disabled' : ''}>Rechazar</button>
+                </td>
+                </tr>`;
+                $("#bodyTable").append(filaHTML);
+            });
+
+        }
+        var tabla = document.getElementById("appointmentsTable");
+
+        function filtrar() {
+            var inputBusqueda = document.getElementById('buscarCita');
+            var filtro = inputBusqueda.value.toUpperCase();
+
+            var filas = tabla.getElementsByTagName('tr');
+
+            for (var i = 0; i < filas.length; i++) {
+                if (filas[i].getElementsByTagName('th').length === 0) {
+                    var celdas = filas[i].getElementsByTagName('td');
+                    var mostrarFila = false;
+
+                    for (var j = 0; j < celdas.length; j++) {
+                        var textoCelda = celdas[j].textContent || celdas[j].innerText;
+                        if (textoCelda.toUpperCase().indexOf(filtro) > -1) {
+                            mostrarFila = true;
+                            break;
+                        }
+                    }
+
+                    filas[i].style.display = mostrarFila ? '' : 'none';
+                }
+            }
+        }
+    </script>
+    <script src="/ProyectoFundamentos/js/services/doctor_service.js"></script>
+    <script src="/ProyectoFundamentos/views/logout.js" defer></script>
+    <script src="/ProyectoFundamentos/js/app.js"></script>
+
+</body>
+
+</html>

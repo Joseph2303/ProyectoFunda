@@ -1,0 +1,220 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+
+    <style>
+        .container {
+            max-width: 800px;
+            margin: 50px auto;
+            padding: 20px;
+            background-color: white;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            border-radius: 10px;
+        }
+
+        h1,
+        h2 {
+            text-align: center;
+        }
+
+        form {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        form div {
+            display: flex;
+            flex-direction: column;
+        }
+
+        form label {
+            margin-bottom: 5px;
+        }
+
+        form input {
+            padding: 8px;
+            font-size: 16px;
+        }
+
+        button {
+            padding: 10px;
+            font-size: 16px;
+            background-color: #0b438d;
+            color: white;
+            border: none;
+            cursor: pointer;
+            border-radius: 10px;
+        }
+
+        button:hover {
+            background-color: #3c5d88;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+
+        table,
+        th,
+        td {
+            border: 1px solid #ddd;
+        }
+
+        th,
+        td {
+            padding: 8px;
+            text-align: left;
+        }
+
+        th {
+            background-color: #f2f2f2;
+        }
+
+        .actions {
+            display: flex;
+            gap: 10px;
+        }
+
+        .actions button {
+            padding: 5px 10px;
+            font-size: 14px;
+            cursor: pointer;
+        }
+
+        .actions .edit {
+            background-color: #0275d8;
+            color: white;
+        }
+
+        .actions .delete {
+            background-color: #d9534f;
+            color: white;
+        }
+    </style>
+
+</head>
+
+<body>
+    <center>
+        <h1 style="color: rgb(255, 255, 255);">Gestión de Citas de Hospital</h1>
+    </center>
+
+    <di class="Cajon">
+        <div class="container">
+            <h1></h1>
+
+            <form id="appointmentForm">
+                <div>
+                    <label for="appointmentName">Nombre de la Cita:</label>
+                    <input type="text" id="appointmentName" name="appointmentName" required>
+                </div>
+                <div>
+                    <label for="appointmentDate">Fecha de la Cita:</label>
+                    <input type="date" id="appointmentDate" name="appointmentDate" required>
+                </div>
+                <div>
+                    <label for="appointmentTime">Hora de la Cita:</label>
+                    <input type="time" id="appointmentTime" name="appointmentTime" required>
+                </div>
+                <div class="container">
+                    <label for="doctor-select">Seleccionar Doctor:</label>
+                    <select id="doctor-select">
+                        <option value="">Seleccione un doctor</option>
+                    </select>
+                </div>
+                <button onclick="acceptAppointment(event)">Agregar Cita</button>
+            </form>
+
+            <br>
+            <br>
+            <br>
+
+            <h2>Lista de Citas</h2>
+            <div class="search-container">
+                <input type="text" id="buscarCita" onkeyup="filtrar()" placeholder="Buscar citas...">
+            </div>
+            <table id="appointmentsTable">
+                <thead>
+                    <tr>
+                        <th>Cita</th>
+                        <th>Fecha</th>
+                        <th>Hora</th>
+                        <th>Doctor</th>
+                        <th>Paciente</th>
+                        <th>Estado</th>
+                        <th>Acciones</th>
+                    </tr>
+                </thead>
+                <tbody id="bodyTable">
+                </tbody>
+            </table>
+        </div>
+    </di>
+
+    <script>
+        $(document).ready(function () {
+            getDoctores();
+            cargarTabla();
+        });
+        async function cargarTabla() {
+
+            $("#bodyTable").empty();
+            const citas = await getAppointment(100);
+            citas.forEach(cita => {
+                let paciente = cita.patient ? `${cita.patient.name} ${cita.patient.last_name}, Cedula: ${cita.patient.cedula}` : 'Pendiente';
+                let filaHTML = `<tr id="row-id${cita.id}"> 
+                <td>${cita.name}</td>
+                <td>${cita.date}</td>
+                <td>${cita.hour}</td>
+                <td>${cita.doctor.name + ' ' + cita.doctor.last_name + ', Cedula:' + cita.doctor.cedula}</td> 
+                <td>${paciente}</td>
+                <td>${cita.status}</td>
+                <td><button class="btn-eliminar" data-id="${cita.id}">Eliminar</button></td>
+                </tr>`;
+                $("#bodyTable").append(filaHTML);
+            });
+
+            $(".btn-eliminar").click(async function (event) {
+                const citaId = $(this).data("id");
+                await deleteAppointment(citaId);
+            });
+        }
+
+        
+        var tabla = document.getElementById("appointmentsTable");
+
+        function filtrar() {
+            var inputBusqueda = document.getElementById('buscarCita');
+            var filtro = inputBusqueda.value.toUpperCase();
+
+            var filas = tabla.getElementsByTagName('tr');
+
+            for (var i = 0; i < filas.length; i++) {
+                if (filas[i].getElementsByTagName('th').length === 0) {
+                    var celdas = filas[i].getElementsByTagName('td');
+                    var mostrarFila = false;
+
+                    for (var j = 0; j < celdas.length; j++) {
+                        var textoCelda = celdas[j].textContent || celdas[j].innerText;
+                        if (textoCelda.toUpperCase().indexOf(filtro) > -1) {
+                            mostrarFila = true;
+                            break;
+                        }
+                    }
+
+                    filas[i].style.display = mostrarFila ? '' : 'none';
+                }
+            }
+        }
+    </script>
+
+</body>
+
+</html>

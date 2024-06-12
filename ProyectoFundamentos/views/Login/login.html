@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+    <link rel="stylesheet" href="/ProyectoFundamentos/views/Login/login.css">
+    <link rel="stylesheet" href="/ProyectoFundamentos/views/Login/messagesInfo.css">
+    <link rel="icon" type="image/x-icon" href="/ProyectoFundamentos/Assets/icon/doctor.png">
+    <title>Iniciar Sesión</title>
+    <script src="/MessagesInfo.js"></script>
+
+</head>
+
+<body>
+
+    <div class="container" id="container">
+        <div class="form-container sign-up">
+            <form>
+                <div>
+                    <label for="patientName">Nombre:</label>
+                    <input type="text" id="patientName" name="patientName" required>
+                </div>
+                <div>
+                    <label for="patientLastName">Apellidos:</label>
+                    <input type="text" id="patientLastName" name="patientLastName" required>
+                </div>
+                <div>
+                    <label for="patientAge">Edad:</label>
+                    <input type="number" id="patientAge" name="patientAge" required>
+                </div>
+                <div>
+                    <label for="patientCedula">Cedula:</label>
+                    <input type="text" id="patientCedula" name="patientCedula" required>
+                </div>
+                <br>
+                <div>
+                    <label for="patientGender">Género:</label>
+                    <select id="patientGender" name="patientGender" required>
+                        <option value="Masculino">Masculino</option>
+                        <option value="Femenino">Femenino</option>
+                        <option value="Otro">Otro</option>
+                    </select>
+                </div>
+                <br>
+                <div>
+                    <label for="patientContact">Contacto Tel:</label>
+                    <input type="text" id="patientContact" name="patientContact" required>
+                </div>
+                <div>
+                    <label for="patientEmail">Email:</label>
+                    <input type="email" id="patientEmail" name="patientEmail" required>
+                </div>
+                <div>
+                    <label for="patientPassword">Contraseña:</label>
+                    <input type="password" id="patientPassword" name="patientPassword" required>
+                </div>
+                <button onclick="getDatesForms(event)">Registrarse</button>
+            </form>
+        </div>
+
+        <div class="form-container sign-in">
+            <form>
+                <h1>Iniciar Sesión</h1>
+                <input id="email" type="email" placeholder="Correo electrónico">
+                <input id="password" type="password" placeholder="Contraseña">
+                <button onclick="getDatesForms(event)">Iniciar Sesión</button>
+            </form>
+        </div>
+        <div class="toggle-container">
+            <div class="toggle">
+                <div class="toggle-panel toggle-left">
+                    <h1>¡Bienvenido de nuevo!</h1>
+                    <p>Ingresa para usar todas las funciones del sitio</p>
+                    <button onclick="clearFormFields()" class="hidden" id="login">Iniciar Sesión</button>
+                </div>
+                <div class="toggle-panel toggle-right">
+                    <h1>¡Bienvenido!</h1>
+                    <p>Regístrate para usar todas las funciones del sitio</p>
+                    <button onclick="clearFormFields()" class="hidden" id="register">Registrarse</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script>
+        function clearFormFields() {
+            $('#patientName').val('');
+            $('#patientLastName').val('');
+            $('#patientAge').val('');
+            $('#patientCedula').val('');
+            $('#patientContact').val('');
+            $('#patientEmail').val('');
+            $('#patientPassword').val('');
+            $('#email').val('');
+            $('#password').val('');
+        }
+    </script>
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+    <script src="/ProyectoFundamentos/Scripts/Login/login.js"></script>
+    <script src="/ProyectoFundamentos/js/services/user_service.js"></script>
+    <script src="/ProyectoFundamentos/js/app.js"></script>
+
+</body>
+
+</html>

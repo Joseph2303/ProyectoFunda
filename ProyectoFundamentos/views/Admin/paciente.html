@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gestión de Pacientes</title>
+    <style>
+        .container {
+            max-width: 800px;
+            margin: 50px auto;
+            padding: 20px;
+            background-color: white;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            border-radius: 10px;
+        }
+
+        h1,
+        h2 {
+            text-align: center;
+        }
+
+        form {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        form div {
+            display: flex;
+            flex-direction: column;
+        }
+
+        form label {
+            margin-bottom: 5px;
+        }
+
+        form input {
+            padding: 8px;
+            font-size: 16px;
+        }
+
+        button {
+            padding: 10px;
+            font-size: 16px;
+            background-color: #0b438d;
+            color: white;
+            border: none;
+            cursor: pointer;
+            border-radius: 10px;
+        }
+
+        button:hover {
+            background-color: #3c5d88;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+
+        table,
+        th,
+        td {
+            border: 1px solid #ddd;
+        }
+
+        th,
+        td {
+            padding: 8px;
+            text-align: left;
+        }
+
+        th {
+            background-color: #f2f2f2;
+        }
+
+        .actions {
+            display: flex;
+            gap: 10px;
+        }
+
+        .actions button {
+            padding: 5px 10px;
+            font-size: 14px;
+            cursor: pointer;
+        }
+
+        .actions .edit {
+            background-color: #0275d8;
+            color: white;
+        }
+
+        .actions .delete {
+            background-color: #d9534f;
+            color: white;
+        }
+    </style>
+</head>
+
+<body>
+    <center>
+        <h1 style="color: rgb(255, 255, 255);">Gestión de Pacientes</h1>
+    </center>
+    <div class="container">
+
+        <h2>Lista de Pacientes</h2>
+        <div class="search-container">
+            <input type="text" id="buscarCita" onkeyup="filtrar()" placeholder="Buscar citas...">
+        </div>
+        <table id="patientsTable">
+            <thead>
+                <tr>
+                    <th>Nombre</th>
+                    <th>Apellidos</th>
+                    <th>Edad</th>
+                    <th>Género</th>
+                    <th>Contacto</th>
+                    <th>Cedula</th>
+                    <th>Correo</th>
+                    <th>Acciones</th>
+                </tr>
+            </thead>
+            <tbody id="bodyTable">
+                <!-- Los pacientes se agregarán aquí -->
+            </tbody>
+        </table>
+    </div>
+
+    <script>
+
+        $(document).ready(function () {
+            cargarTabla();
+        });
+        async function cargarTabla() {
+
+            $("#bodyTable").empty();
+            const pacientes = await getPatients(100);
+            pacientes.forEach(paciente => {
+                let filaHTML = `<tr id="row-id${paciente.id}"> 
+                <td>${paciente.name}</td>
+                <td>${paciente.last_name}</td>
+                <td>${paciente.age}</td>
+                <td>${paciente.gender}</td>
+                <td>${paciente.contact}</td>
+                <td>${paciente.cedula}</td>
+                <td>${paciente.user.email}</td>                 
+
+                <td><button class="btn-actualizar" data-id="${paciente.id}">Actualizar</button>
+                <button class="btn-eliminar" data-id="${paciente.id}">Eliminar</button></td>
+                </tr>`;
+                $("#bodyTable").append(filaHTML);
+            });
+
+            $(".btn-eliminar").click(async function (event) {
+                const pacienteId = $(this).data("id");
+                await deletePatient(pacienteId);
+            });
+        }
+
+        var tabla = document.getElementById("patientsTable");
+
+        function filtrar() {
+            var inputBusqueda = document.getElementById('buscarCita');
+            var filtro = inputBusqueda.value.toUpperCase();
+
+            var filas = tabla.getElementsByTagName('tr');
+
+            for (var i = 0; i < filas.length; i++) {
+                if (filas[i].getElementsByTagName('th').length === 0) {
+                    var celdas = filas[i].getElementsByTagName('td');
+                    var mostrarFila = false;
+
+                    for (var j = 0; j < celdas.length; j++) {
+                        var textoCelda = celdas[j].textContent || celdas[j].innerText;
+                        if (textoCelda.toUpperCase().indexOf(filtro) > -1) {
+                            mostrarFila = true;
+                            break;
+                        }
+                    }
+
+                    filas[i].style.display = mostrarFila ? '' : 'none';
+                }
+            }
+        }
+    </script>
+</body>
+
+</html>

@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Administrador</title>
+    <link rel="stylesheet" href="/ProyectoFundamentos/views/Admin/Style/main.css">
+    <link rel="icon" type="image/x-icon" href="/ProyectoFundamentos/Assets/icon/doctor.png">
+    <link rel="stylesheet" href="/ProyectoFundamentos/views/Login/messagesInfo.css">
+    <script src="/MessagesInfo.js"></script>
+
+    <style>
+        .container {
+            max-width: 800px;
+            margin: 50px auto;
+            padding: 20px;
+            background-color: white;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            border-radius: 10px;
+        }
+    </style>
+
+</head>
+
+<body>
+    <div class="menu">
+        <ion-icon name="menu-outline"></ion-icon>
+        <ion-icon name="close-outline"></ion-icon>
+    </div>
+
+    <div class="barra-lateral">
+        <div>
+            <spans>Administrador</span>
+                <div class="nombre-pagina">
+                    <ion-icon id="cloud" name="reader-outline"></ion-icon>
+                    <span>Hospital</span>
+                </div>
+        </div>
+
+        <nav class="navegacion">
+            <ul>
+                <li>
+                    <a href="/ProyectoFundamentos/views/Admin/main.html">
+                        <ion-icon name="browsers-outline"></ion-icon>
+                        <span>Inicio</span>
+                    </a>
+                </li>
+                <li>
+                    <a id="doctor" href="#">
+                        <ion-icon name="people-outline"></ion-icon>
+                        <span>Doctor</span>
+                    </a>
+                </li>
+                <li>
+                    <a id="paciente" href="#">
+                        <ion-icon name="body-outline"></ion-icon>
+                        <span>Paciente</span>
+                    </a>
+                </li>
+                <li>
+                    <a id="citas" href="#">
+                        <ion-icon name="checkbox-outline"></ion-icon>
+                        <span>Citas</span>
+                    </a>
+                </li>
+                <br>
+                <br>
+                <br>
+                <li>
+                    <a id="logoutIcon" href="#">
+                        <ion-icon name="walk-outline"></ion-icon>
+                        <span>Cerrar Sesión</span>
+                    </a>
+                </li>
+            </ul>
+        </nav>
+
+        <div>
+            <div class="linea"></div>
+
+            <div class="modo-oscuro">
+                <div class="info">
+                    <ion-icon name="moon-outline"></ion-icon>
+                    <span>Drak Mode</span>
+                </div>
+                <div class="switch">
+                    <div class="base">
+                        <div class="circulo">
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <main id="main-containerEncargado">
+
+
+        <br>
+        <br>
+        <br>
+        <br>
+        <center>
+            <h1 style="color: rgb(255, 255, 255);">Perfil del Administrador</h1>
+        </center>
+        <div class="container">
+            <p>
+                El perfil de administrador tiene la responsabilidad de gestionar las citas médicas, los pacientes y la
+                asignación de pacientes a los doctores dentro del sistema. Esto implica la capacidad de agregar nuevas
+                citas, registrar información de los pacientes y asignarlos a los médicos disponibles. El administrador
+                actúa como el enlace crucial entre los pacientes y los profesionales de la salud, asegurando una gestión
+                eficiente y ordenada de las citas y los recursos del hospital.
+            </p>
+        </div>
+
+    </main>
+
+
+    <script type="module" src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.esm.js"></script>
+    <script nomodule src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.js"></script>
+    <script src="/ProyectoFundamentos/views/Admin/main.js"></script>
+    <script src="/ProyectoFundamentos/js/jquery.js"></script>
+    <script src="/ProyectoFundamentos/js/router.js"></script>
+    <script src="/ProyectoFundamentos/js/services/admin_service.js"></script>
+    <script src="/ProyectoFundamentos/js/app.js"></script>
+    <script src="/ProyectoFundamentos/views/logout.js" defer></script>
+</body>
+
+</html>

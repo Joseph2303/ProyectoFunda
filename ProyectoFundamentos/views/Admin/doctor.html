@@ -1,0 +1,230 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gestión de Pacientes</title>
+    <style>
+        .container {
+            max-width: 800px;
+            margin: 50px auto;
+            padding: 20px;
+            background-color: white;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            border-radius: 10px;
+        }
+
+        h1,
+        h2 {
+            text-align: center;
+        }
+
+        form {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        form div {
+            display: flex;
+            flex-direction: column;
+        }
+
+        form label {
+            margin-bottom: 5px;
+        }
+
+        form input {
+            padding: 8px;
+            font-size: 16px;
+        }
+
+        button {
+            padding: 10px;
+            font-size: 16px;
+            background-color: #0b438d;
+            color: white;
+            border: none;
+            cursor: pointer;
+            border-radius: 10px;
+        }
+
+        button:hover {
+            background-color: #3c5d88;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+
+        table,
+        th,
+        td {
+            border: 1px solid #ddd;
+        }
+
+        th,
+        td {
+            padding: 8px;
+            text-align: left;
+        }
+
+        th {
+            background-color: #f2f2f2;
+        }
+
+        .actions {
+            display: flex;
+            gap: 10px;
+        }
+
+        .actions button {
+            padding: 5px 10px;
+            font-size: 14px;
+            cursor: pointer;
+        }
+
+        .actions .edit {
+            background-color: #0275d8;
+            color: white;
+        }
+
+        .actions .delete {
+            background-color: #d9534f;
+            color: white;
+        }
+    </style>
+</head>
+
+<body>
+    <center>
+        <h1 style="color: rgb(255, 255, 255);">Gestión de Doctor</h1>
+    </center>
+    <div class="container">
+        <form id="patientForm">
+            <div>
+                <label for="doctorName">Nombre del Doctor:</label>
+                <input type="text" id="doctorName" name="doctorName" required>
+            </div>
+            <div>
+                <label for="doctorLastName">Apellidos del Doctor:</label>
+                <input type="text" id="doctorLastName" name="doctorLastName" required>
+            </div>
+            <div>
+                <label for="doctorAge">Edad del Doctor:</label>
+                <input type="number" id="doctorAge" name="doctorAge" required>
+            </div>
+            <div>
+                <label for="doctorGender">Género del Doctor:</label>
+                <select id="doctorGender" name="doctorGender" required>
+                    <option value="Masculino">Masculino</option>
+                    <option value="Femenino">Femenino</option>
+                    <option value="Otro">Otro</option>
+                </select>
+            </div>
+            <div>
+                <label for="doctorContact">Contacto del Doctor:</label>
+                <input type="text" id="doctorContact" name="doctorContact" required>
+            </div>
+            <div>
+                <label for="doctorCedula">Cedula del Doctor:</label>
+                <input type="text" id="doctorCedula" name="doctorCedula" required>
+            </div>
+            <div>
+                <label for="doctorEmail">Correo del Doctor:</label>
+                <input type="email" id="doctorEmail" name="doctorEmail" required>
+            </div>
+            <div>
+                <label for="doctorPassword">Contraseña del Doctor:</label>
+                <input type="password" id="doctorPassword" name="doctorPassword" required>
+            </div>
+            <button onclick="addDoctor(event)">Agregar Doctor</button>
+        </form>
+        <br>
+        <br>
+        <br>
+        <h2>Lista de Doctor</h2>
+        <div class="search-container">
+            <input type="text" id="buscarCita" onkeyup="filtrar()" placeholder="Buscar citas...">
+        </div>
+        <table id="patientsTable">
+            <thead>
+                <tr>
+                    <th>Nombre</th>
+                    <th>Apelidos</th>
+                    <th>Edad</th>
+                    <th>Género</th>
+                    <th>Contacto</th>
+                    <th>Cedula</th>
+                    <th>Email</th>
+                    <th>Acciones</th>
+                </tr>
+            </thead>
+            <tbody id="bodyTable">
+                <!-- Los pacientes se agregarán aquí -->
+            </tbody>
+        </table>
+    </div>
+
+    <script>
+        $(document).ready(function () {
+            cargarTabla();
+        });
+        async function cargarTabla() {
+
+            $("#bodyTable").empty();
+            const doctors = await getDoctors(100);
+            console.log(doctors)
+            doctors.forEach(doctor => {
+                let filaHTML = `<tr id="row-id${doctor.id}"> 
+                <td>${doctor.name}</td>
+                <td>${doctor.last_name}</td>
+                <td>${doctor.age}</td>
+                <td>${doctor.gender}</td>
+                <td>${doctor.contact}</td>
+                <td>${doctor.cedula}</td>
+                <td>${doctor.user.email}</td>                 
+                <td> <button class="btn-eliminar" data-id="${doctor.id}">Eliminar</button></td>
+                </tr>`;
+                $("#bodyTable").append(filaHTML);
+            });
+
+            $(".btn-eliminar").click(async function (event) {
+                const doctorId = $(this).data("id");
+                await deletedDoctor(doctorId);
+            });
+        }
+
+        
+        var tabla = document.getElementById("patientsTable");
+
+        function filtrar() {
+            var inputBusqueda = document.getElementById('buscarCita');
+            var filtro = inputBusqueda.value.toUpperCase();
+
+            var filas = tabla.getElementsByTagName('tr');
+
+            for (var i = 0; i < filas.length; i++) {
+                if (filas[i].getElementsByTagName('th').length === 0) {
+                    var celdas = filas[i].getElementsByTagName('td');
+                    var mostrarFila = false;
+
+                    for (var j = 0; j < celdas.length; j++) {
+                        var textoCelda = celdas[j].textContent || celdas[j].innerText;
+                        if (textoCelda.toUpperCase().indexOf(filtro) > -1) {
+                            mostrarFila = true;
+                            break;
+                        }
+                    }
+
+                    filas[i].style.display = mostrarFila ? '' : 'none';
+                }
+            }
+        }
+    </script>
+</body>
+
+</html>
