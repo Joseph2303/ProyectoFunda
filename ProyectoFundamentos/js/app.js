@@ -193,7 +193,9 @@ async function updateCita(event) {
     } else if (user.role === 'Doctor') {
         const btn = event.target;
         citaId = btn.dataset.id;
+        console.log(btn.dataset);
         patientId = btn.dataset.patientId;
+
         if (!patientId) {
             console.error('Error: No se pudo obtener el ID del paciente');
             showNotification('Error: No se pudo obtener el ID del paciente');
@@ -300,6 +302,7 @@ const getDataFromCache = async (url) => {
     const CACHE_DYNAMIC_NAME = 'sw-pfw-dynamic-v1'; // Definir el nombre del caché aquí
     const cache = await caches.open(CACHE_DYNAMIC_NAME);
     const response = await cache.match(url);
+    console.log(response);
     if (!response) return null;
     return response.json();
 };

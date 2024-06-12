@@ -6,23 +6,25 @@ const CACHE_LIMIT = 200;
 const urlsToCache = [
     '/',
     // administrador
-    '/ProyectoFundamentos/views/Admin/citas.html',
-    '/ProyectoFundamentos/views/Admin/citasDoctor.html',
     '/ProyectoFundamentos/views/Admin/Style/main.css',
-    '/ProyectoFundamentos/views/Admin/citaspaciente.html',
+    '/ProyectoFundamentos/views/Admin/Style/messagesInfo.css',
+    '/ProyectoFundamentos/views/Admin/citas.html',
     '/ProyectoFundamentos/views/Admin/doctor.html',
     '/ProyectoFundamentos/views/Admin/main.html',
-    '/ProyectoFundamentos/views/Admin/paciente.html',
     '/ProyectoFundamentos/views/Admin/main.js',
+    '/ProyectoFundamentos/views/Admin/paciente.html',
     // Paciente
     '/ProyectoFundamentos/views/Paciente/main.html',
+    '/ProyectoFundamentos/views/Paciente/messagesInfo.css',
     '/ProyectoFundamentos/views/Paciente/pacienteMain.css',
     // Doctor
     '/ProyectoFundamentos/views/Doctor/doctorMain.css',
     '/ProyectoFundamentos/views/Doctor/main.html',
+    '/ProyectoFundamentos/views/Doctor/messagesInfo.css',
     // login
     '/ProyectoFundamentos/views/Login/login.css',
     '/ProyectoFundamentos/views/Login/login.html',
+    '/ProyectoFundamentos/views/Login/messagesInfo.css',
     // logout
     '/ProyectoFundamentos/views/logout.js',
     // services
@@ -36,6 +38,7 @@ const urlsToCache = [
     '/ProyectoFundamentos/js/jquery.js',
     '/ProyectoFundamentos/js/router.js',
     '/ProyectoFundamentos/js/sw-db.js',
+    'ProyectoFundamentos/js/ws.js',
     '/ProyectoFundamentos/Scripts/Login/login.js',
     // imágenes e iconos
     '/ProyectoFundamentos/Assets/img/origin.jpg',

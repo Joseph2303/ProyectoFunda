@@ -144,7 +144,8 @@ const fetchAPI = async (query, input) => {
 //citas
 
 const getAppointmentByDoctor = async (doctorId) => {
-    const query = `
+    try{
+        const query = `
         query CitasByDoctor($doctorId: ID!) {
             citasByDoctor(doctorId: $doctorId) {
                                
@@ -173,8 +174,33 @@ const getAppointmentByDoctor = async (doctorId) => {
         doctorId
     };
     const response = await fetchAPI2(query, variables );
-    console.log(response)
+    if (!response || !response.data || !response.data.citasByDoctor) {
+        console.error('Estructura de la respuesta inválida:', response);
+        throw new Error('Datos inválidos de la respuesta de la API');
+    }
+
+    saveDataToCache(urlAPI + "/getCitasByDoctor", response); 
+    console.log("funciona");
     return response.data.citasByDoctor;
+    }catch (error) {
+        console.error('Error al obtener las citas desde internet:', error);
+
+        // Intentar obtener los datos del caché
+        try {
+            const cachedData = await getDataFromCache(urlAPI + "/getCitasByDoctor");
+            if (cachedData && cachedData.data && cachedData.data.citasByDoctor) {
+                console.log("Datos obtenidos del caché:", cachedData);
+                return cachedData.data.citasByDoctor;
+            } else {
+                console.error('No se encontraron datos en caché:', cachedData);
+                throw new Error('No se encontraron datos en caché');
+            }
+        } catch (cacheError) {
+            console.error('Error al obtener las citas desde caché:', cacheError);
+            throw cacheError;
+        }
+    }
+    
 };
 
 const updateAppointment = async (id,  patientId, status) => {
@@ -187,9 +213,34 @@ const updateAppointment = async (id,  patientId, status) => {
         }
     `;
     const variables = {
-         id, patientId, status 
+        id, patientId, status 
     };
-    return await fetchAPI(query, variables);
+    try {
+        if (navigator.onLine) {
+            return await fetchAPI(query, variables);
+        } else {
+            const operation = { type: 'updateAppointment', payload: { id, patientId, status } };
+            await savePendingOperation(operation);
+            const message = `Operación pendiente guardada. Se realizará cuando haya conexión. Datos: ${JSON.stringify(operation)}`;
+            
+            if ('Notification' in window && Notification.permission === 'granted') {
+                new Notification(message);
+            } else if ('Notification' in window && Notification.permission !== 'denied') {
+                Notification.requestPermission().then(function(permission) {
+                    if (permission === 'granted') {
+                        new Notification(message);
+                    }
+                });
+            } else {
+                console.error('Las notificaciones no están permitidas.');
+            }
+    
+            throw new Error('No hay conexión a Internet. La operación se realizará cuando haya conexión.');
+        }
+    } catch (error) {
+        console.error('Error al crear usuario:', error);
+        throw error;
+    }
 };
 
 const fetchAPI2 = async (query, variables ) => {
