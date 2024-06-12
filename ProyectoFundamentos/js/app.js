@@ -183,7 +183,7 @@ async function updateCita(event) {
         }
         if (event.target.id === "btn-acept") {
             status = 'Aceptado';
-        } else if (event.target.id === "btn-rechazar") {
+        } else if (event.target.id === "btn-reject") {
             status = 'Rechazado';
         } else {
             console.error('Error: No se pudo determinar la acción (aceptar/rechazar)');
@@ -195,9 +195,7 @@ async function updateCita(event) {
     }
 
     try {
-        const id = citaId.toString();
-
-        const updated = await updateAppointment(id, patientId, status);
+        const updated = await updateAppointment(citaId, patientId, status);
         if (updated) {
             alert(`Cita actualizada a ${status}`);
             cargarTabla();

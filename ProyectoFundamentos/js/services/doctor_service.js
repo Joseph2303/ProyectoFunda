@@ -126,8 +126,6 @@ const fetchAPI = async (query, input) => {
         })
     };
     try {
-        console.log("hola"+ input.input)
-        console.log(options)
         const result = await fetch(urlAPI, options);
         const data = await result.json();
         if (data.errors) {
