@@ -58,7 +58,7 @@
             $("#bodyTable").empty();
             const doctor = JSON.parse(localStorage.getItem("doctor"))
             const citas = await getAppointmentByDoctor(doctor.id);
-
+            console.log(citas)
             citas.forEach(cita => {
                 let paciente = cita.patient ? `${cita.patient.name} ${cita.patient.last_name}, Cedula: ${cita.patient.cedula}` : 'Pendiente';
                 let filaHTML = `<tr id="row-id${cita.id}"> 

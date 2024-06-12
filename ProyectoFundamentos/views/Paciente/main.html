@@ -147,25 +147,43 @@
         });
 
         async function cargarTabla() {
+            patient = JSON.parse(localStorage.getItem("patient"))
             $("#bodyTable").empty();
             const citas = await getAppointment(100);
             citas.forEach(cita => {
-                let filaHTML = `<tr id="row-id${cita.id}"> 
-            <td>${cita.doctor.name + ' ' + cita.doctor.last_name + ', Cedula:' + cita.doctor.cedula}</td> 
-            <td>${cita.name}</td>
-            <td>${cita.date}</td>
-            <td>${cita.hour}</td>
-            <td>${cita.status}</td>
-            <td><input data-doctorId="${cita.doctor.id}" data-name="${cita.name}" data-date="${cita.date}" data-hour="${cita.hour}" data-id="${cita.id}" type="checkbox" class="action-checkbox" ${cita.status === 'Aceptado' || cita.status === 'Rechazado' || cita.status === 'Pendiente'? 'disabled' : ''}></td>
-            </tr>`;
-                $("#bodyTable").append(filaHTML);
+
+                if (cita.patient) {
+                    if (cita.patient.id == patient.id) {
+                        let filaHTML = `<tr id="row-id${cita.id}"> 
+                    <td>${cita.doctor.name + ' ' + cita.doctor.last_name + ', Cedula:' + cita.doctor.cedula}</td> 
+                    <td>${cita.name}</td>
+                    <td>${cita.date}</td>
+                    <td>${cita.hour}</td>
+                    <td>${cita.status}</td>
+                    <td><input data-doctorId="${cita.doctor.id}" data-name="${cita.name}" data-date="${cita.date}" data-hour="${cita.hour}" data-id="${cita.id}" type="checkbox" class="action-checkbox" ${cita.status === 'Aceptado' || cita.status === 'Rechazado' || cita.status === 'Pendiente' ? 'disabled' : ''}></td>
+                    </tr>`;
+                        $("#bodyTable").append(filaHTML);
+                    }
+                } else {
+                    let filaHTML = `<tr id="row-id${cita.id}"> 
+                    <td>${cita.doctor.name + ' ' + cita.doctor.last_name + ', Cedula:' + cita.doctor.cedula}</td> 
+                    <td>${cita.name}</td>
+                    <td>${cita.date}</td>
+                    <td>${cita.hour}</td>
+                    <td>${cita.status}</td>
+                    <td><input data-doctorId="${cita.doctor.id}" data-name="${cita.name}" data-date="${cita.date}" data-hour="${cita.hour}" data-id="${cita.id}" type="checkbox" class="action-checkbox" ${cita.status === 'Aceptado' || cita.status === 'Rechazado' || cita.status === 'Pendiente' ? 'disabled' : ''}></td>
+                    </tr>`;
+                    $("#bodyTable").append(filaHTML);
+                }
+
+
             });
         }
 
         async function cargarCitasAprobadas() {
 
             $("#bodyTableApproved").empty();
-            const paciente =JSON.parse(localStorage.getItem("patient")) 
+            const paciente = JSON.parse(localStorage.getItem("patient"))
             const citas = await getAppointmentAcept(paciente.id);
             console.log(citas)
             citas.forEach(cita => {
@@ -184,7 +202,7 @@
         async function cargarCitasRechazadas() {
 
             $("#bodyTableRejected").empty();
-            const paciente =JSON.parse(localStorage.getItem("patient")) 
+            const paciente = JSON.parse(localStorage.getItem("patient"))
             const citas = await getAppointmentReject(paciente.id);
             console.log(citas)
             citas.forEach(cita => {

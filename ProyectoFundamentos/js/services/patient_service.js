@@ -171,6 +171,12 @@ const getAppointment = async (limit) => {
                          last_name
                          cedula
                         }
+                        patient {
+                         id
+                         name
+                         last_name
+                         cedula
+                        }
                     }
                 }
             }
