@@ -1,11 +1,5 @@
-const token = localStorage.getItem('token');
+const Authorization = "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJhQXN4ZXFzZXJmc2QiLCJlbWFpbCI6ImVkZGllckB1bmEuY3IiLCJuYW1lIjoiRWRkaWVyIiwiaWF0IjoxNzE3NjMwNTc4fQ.m_G6IiX7knD9hppJ5yVpP8KN6ggMoKY4_s3hnmL4CFU";
 
-if (token) {
-  const Authorization = `Bearer ${token}`;
-  console.log(Authorization); // You can now use this token in your API calls
-} else {
-  console.log('Token not found in local storage');
-}
 const urlAPI = "http://localhost:9000/graphql"
 
 const createUser = async (id, email, password, role) => {
@@ -129,7 +123,6 @@ const fetchAPI = async (query, input) => {
         const result = await fetch(urlAPI, options);
         const data = await result.json();
         if (data.errors) {
-           // mostrarMensajeDeInfo('JAJAJAJAJ')
             mostrarMensajeDeErrorr('Error, verifique sus datos')
             throw new Error(data.errors[0].message);
         }
@@ -164,7 +157,7 @@ const createPatient = async (name, last_name, age, cedula, gender, contact, user
     };
     console.log(input)
     try {
-        if (navigator.onLine) {
+        if (navigator.onLine) {      
             return await fetchAPI(query, input);
         } else {
             const operation = { type: 'createPaciente', payload: { name, last_name, age, cedula, gender, contact, userId} };
@@ -206,6 +199,7 @@ async function login(email, password) {
 
         if (!response.ok) {
             mostrarMensajeDeError('Error al iniciar sesion, verifique sus datos')
+
             throw new Error('Login fallido');
         }
 

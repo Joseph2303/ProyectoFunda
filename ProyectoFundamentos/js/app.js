@@ -162,7 +162,7 @@ async function getDatesForms(event) {
         try {
             const user = await createUser(0, email, password, 'Paciente');
             await createPatient(name, last_name, age, cedula, gender, contact, user.data.createUser.id);
-           
+            mostrarMensajeDeInfo('Paciente creado exitosamente')
             console.log('Paciente y usuario creados exitosamente');
         } catch (error) {
             console.error('Error al crear usuario o paciente:', error);

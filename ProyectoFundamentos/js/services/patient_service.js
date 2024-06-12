@@ -1,10 +1,5 @@
-const token = localStorage.getItem('token');
-if (token) {
-  const Authorization = `Bearer ${token}`;
-  console.log(Authorization); // You can now use this token in your API calls
-} else {
-  console.log('Token not found in local storage');
-}const urlAPI = "http://localhost:9000/graphql"
+const Authorization = "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJhQXN4ZXFzZXJmc2QiLCJlbWFpbCI6ImVkZGllckB1bmEuY3IiLCJuYW1lIjoiRWRkaWVyIiwiaWF0IjoxNzE3NjMwNTc4fQ.m_G6IiX7knD9hppJ5yVpP8KN6ggMoKY4_s3hnmL4CFU";
+const urlAPI = "http://localhost:9000/graphql"
 
 const getPatients = async (limit) => {
     try {
