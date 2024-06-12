@@ -77,7 +77,7 @@ const getDoctors = async (limit) => {
 };
 
 
-const updateDoctor = async (id, nombre, apellidos, edad, genero, contacto, role,capture) => {
+const updateDoctor = async (id, nombre, apellidos, edad, genero, contacto, role, capture) => {
     const query = `
         mutation($input: UpdateDoctorInput!) {
             updateDoctor(input: $input) {
@@ -93,7 +93,7 @@ const updateDoctor = async (id, nombre, apellidos, edad, genero, contacto, role,
         }
     `;
     const variables = {
-        input: { id, nombre, apellidos, edad, genero, contacto, role,capture }
+        input: { id, nombre, apellidos, edad, genero, contacto, role, capture }
     };
     return await fetchAPI(query, variables);
 };
@@ -109,3 +109,111 @@ const deleteDoctor = async (id) => {
     const variables = { id };
     return await fetchAPI(query, variables);
 };
+
+
+const fetchAPI = async (query, input) => {
+    const options = {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            Authorization
+        },
+        body: JSON.stringify({
+            query,
+            variables: {
+                input
+            }
+        })
+    };
+    try {
+        const result = await fetch(urlAPI, options);
+        const data = await result.json();
+        if (data.errors) {
+            throw new Error(data.errors[0].message);
+        }
+        return data;
+    } catch (error) {
+        console.error('Error en la solicitud GraphQL:', error);
+        throw new Error('Error en la solicitud GraphQL. Por favor, inténtalo de nuevo más tarde.');
+    }
+}
+
+
+//////////////////////////////////
+//citas
+
+const getAppointmentByDoctor = async (doctorId) => {
+    const query = `
+        query CitasByDoctor($doctorId: ID!) {
+            citasByDoctor(doctorId: $doctorId) {
+                               
+                id
+                name 
+                date
+                hour
+                status
+                doctor {
+                     id
+                     name
+                     last_name
+                     cedula
+                }
+                patient {
+                     id
+                     name
+                     last_name
+                     cedula
+                }
+                
+            }
+        }
+    `;
+    const variables  = {
+        doctorId
+    };
+    const response = await fetchAPI2(query, variables );
+    console.log(response)
+    return response.data.citasByDoctor;
+};
+
+const updateAppointment = async (id,  patientId, status) => {
+    const query = `
+        mutation UpdateCita($input: CitaInput!) {
+            updateCita(input: $input) {
+                id
+                name
+            }
+        }
+    `;
+    const variables = {
+        input: {id, patientId, status }
+    };
+    console.log(variables)
+    return await fetchAPI(query, variables);
+};
+
+const fetchAPI2 = async (query, variables ) => {
+    const options = {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            Authorization
+        },
+        body: JSON.stringify({
+            query,
+            variables       
+        })
+    };
+    try {
+        const result = await fetch(urlAPI, options);
+        const data = await result.json();
+        if (data.errors) {
+            cargarTabla();
+            throw new Error(data.errors[0].message);
+        }
+        return data;
+    } catch (error) {
+        console.error('Error en la solicitud GraphQL:', error);
+        throw new Error('Error en la solicitud GraphQL. Por favor, inténtalo de nuevo más tarde.');
+    }
+}

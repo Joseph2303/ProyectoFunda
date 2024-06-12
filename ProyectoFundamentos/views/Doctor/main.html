@@ -8,11 +8,13 @@
     <link rel="stylesheet" href="/ProyectoFundamentos/views/Doctor/doctorMain.css">
     <link rel="icon" type="image/x-icon" href="/ProyectoFundamentos/Assets/icon/doctor.png">
     <script src="https://cdn.lordicon.com/lordicon.js"></script>
+    <script src="/ProyectoFundamentos/js/jquery.js"></script>
 </head>
 
 <body>
 
-    <lord-icon class="P" herf="#" src="https://cdn.lordicon.com/gwvmctbb.json" trigger="hover" id="logoutIcon">Cerrar Sesión
+    <lord-icon class="P" herf="#" src="https://cdn.lordicon.com/gwvmctbb.json" trigger="hover" id="logoutIcon">Cerrar
+        Sesión
     </lord-icon>
     <br>
     <br>
@@ -25,13 +27,16 @@
             <table id="appointmentsTable">
                 <thead>
                     <tr>
-                        <th>Paciente</th>
+                        <th>Cita</th>
                         <th>Fecha</th>
                         <th>Hora</th>
+                        <th>Doctor</th>
+                        <th>Paciente</th>
+                        <th>Estado</th>
                         <th>Acciones</th>
                     </tr>
                 </thead>
-                <tbody>
+                <tbody id="bodyTable">
 
                 </tbody>
             </table>
@@ -39,85 +44,43 @@
     </div>
 
     <script>
-        document.addEventListener('DOMContentLoaded', () => {
-            const appointmentsTableBody = document.getElementById('appointmentsTable').getElementsByTagName('tbody')[0];
-
-            // Ejemplo de citas predefinidas
-            let appointments = [
-                {
-                    id: 1,
-                    patientName: "Juan Perez",
-                    appointmentDate: "2024-06-10",
-                    appointmentTime: "10:00",
-                },
-                {
-                    id: 2,
-                    patientName: "Maria Lopez",
-                    appointmentDate: "2024-06-11",
-                    appointmentTime: "14:00",
-                }
-            ];
-
-            function renderAppointments() {
-                appointmentsTableBody.innerHTML = '';
-
-                appointments.forEach(appointment => {
-                    const row = document.createElement('tr');
-
-                    row.innerHTML = `
-                        <td>${appointment.patientName}</td>
-                        <td>${appointment.appointmentDate}</td>
-                        <td>${appointment.appointmentTime}</td>
-                        <td class="actions">
-                            <button class="accept" onclick="acceptAppointment(${appointment.id})">Aceptar</button>
-                            <button class="reject" onclick="rejectAppointment(${appointment.id})">Rechazar</button>
-                        </td>
-                    `;
-
-                    appointmentsTableBody.appendChild(row);
-                });
-            }
-
-            window.acceptAppointment = function (id) {
-                const appointmentIndex = appointments.findIndex(appt => appt.id === id);
-                if (appointmentIndex !== -1) {
-                    alert(`Cita con ${appointments[appointmentIndex].patientName} aceptada.`);
-                    appointments.splice(appointmentIndex, 1);
-                    renderAppointments();
-                }
-            };
-
-            window.rejectAppointment = function (id) {
-                const appointmentIndex = appointments.findIndex(appt => appt.id === id);
-                if (appointmentIndex !== -1) {
-                    alert(`Cita con ${appointments[appointmentIndex].patientName} rechazada.`);
-                    appointments.splice(appointmentIndex, 1);
-                    renderAppointments();
-                }
-            };
-
-            renderAppointments();
-            window.rejectAppointment = function (id) {
-                const appointmentIndex = appointments.findIndex(appt => appt.id === id);
-                if (appointmentIndex !== -1) {
-                    const reason = prompt(`Por favor, ingrese el motivo de rechazo para la cita con ${appointments[appointmentIndex].patientName}:`);
-                    if (reason !== null && reason !== '') { // Comprueba si se ingresó un motivo válido
-                        alert(`Cita con ${appointments[appointmentIndex].patientName} rechazada debido a: ${reason}`);
-                        appointments.splice(appointmentIndex, 1);
-                        renderAppointments();
-                    } else {
-                        alert("Debe ingresar un motivo válido para rechazar la cita.");
-                    }
-                }
-            };
-
+        $(document).ready(function () {
+            cargarTabla();
         });
+        async function cargarTabla() {
+
+$("#bodyTable").empty();
+const doctor = JSON.parse(localStorage.getItem("doctor"))
+const citas = await getAppointmentByDoctor(doctor.id);
+
+citas.forEach(cita => {
+    let paciente = cita.patient ? `${cita.patient.name} ${cita.patient.last_name}, Cedula: ${cita.patient.cedula}` : 'Pendiente';
+    let filaHTML = `<tr id="row-id${cita.id}"> 
+    <td>${cita.name}</td>
+    <td>${cita.date}</td>
+    <td>${cita.hour}</td>
+    <td>${cita.doctor.name + ' ' + cita.doctor.last_name + ', Cedula:' + cita.doctor.cedula}</td> 
+    <td>${paciente}</td>    
+    <td>${cita.status}</td>        
+    <td>
+        <button id="btn-acept" onclick="updateCita(event)" class="btn-aceptar" data-id="${cita.id}" data-patient-id="${cita.patient ? cita.patient.id : ''}">Aceptar</button>
+        <button id="btn-reject" onclick="updateCita(event)" class="btn-rechazar" data-id="${cita.id}" data-patient-id="${cita.patient ? cita.patient.id : ''}">Rechazar</button>
+    </td>
+    </tr>`;
+    $("#bodyTable").append(filaHTML);
+});
+
+$(".btn-eliminar").click(async function (event) {
+    const doctorId = $(this).data("id");
+    await deletedDoctor(doctorId);
+});
+}
 
     </script>
     <script src="/ProyectoFundamentos/js/services/doctor_service.js"></script>
-    <script src="js/ws.js"></script>
-    <script src="js/app.js"></script>
     <script src="/ProyectoFundamentos/views/logout.js" defer></script>
+    <script src="/ProyectoFundamentos/js/app.js"></script>
+
 </body>
 
 </html>

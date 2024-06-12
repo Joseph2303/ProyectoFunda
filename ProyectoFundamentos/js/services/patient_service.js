@@ -148,6 +148,8 @@ const fetchAPI = async (query, variables) => {
         },
         body: JSON.stringify({ query, variables })
     });
+    console.log(variables)
+    console.log(response)
     const data = await response.json();
     return data.data;
 };
@@ -207,7 +209,7 @@ const getAppointment = async (limit) => {
 
 
 
-const updateAppointment = async (id, patientId, status) => {
+const updateAppointment = async (id, doctorId, status) => {
     const query = `
         mutation UpdateCita($input: CitaInput!) {
             updateCita(input: $input) {
@@ -217,7 +219,7 @@ const updateAppointment = async (id, patientId, status) => {
         }
     `;
     const variables = {
-        input: {id, patientId, status }
+        input: {id,  doctorId, status }
     };
     return await fetchAPI(query, variables);
 };

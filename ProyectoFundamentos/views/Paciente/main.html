@@ -162,6 +162,7 @@
         }
 
         async function cargarCitasRechazadas() {
+            
             $("#bodyTable").empty();
             const citas = await getAppointment(100);
             citas.forEach(cita => {
@@ -174,6 +175,12 @@
             <td><input type="checkbox" class="action-checkbox"></td>
             </tr>`;
                 $("#bodyTable").append(filaHTML);
+            });
+
+            citas.forEach(cita => {
+                if (cita.status === "Aceptada") {
+                    $(`#row-id${cita.id} .action-checkbox`).prop("disabled", true);
+                }
             });
         }
 
@@ -198,22 +205,22 @@
         }
 
 
-    // Función para abrir la pantalla emergente de citas aprobadas
-    function openApprovedPopup() {
-        document.getElementById("popup-container").style.display = "block";
-        document.getElementById("Approved").style.display = "block";
-        document.getElementById("Rejected").style.display = "none";
-    }
+        // Función para abrir la pantalla emergente de citas aprobadas
+        function openApprovedPopup() {
+            document.getElementById("popup-container").style.display = "block";
+            document.getElementById("Approved").style.display = "block";
+            document.getElementById("Rejected").style.display = "none";
+        }
 
-    // Función para abrir la pantalla emergente de citas rechazadas
-    function openRejectedPopup() {
-        document.getElementById("popup-container").style.display = "block";
-        document.getElementById("Approved").style.display = "none";
-        document.getElementById("Rejected").style.display = "block";
-    }
-    function closePopup() {
-        document.getElementById("popup-container").style.display = "none";
-    }
+        // Función para abrir la pantalla emergente de citas rechazadas
+        function openRejectedPopup() {
+            document.getElementById("popup-container").style.display = "block";
+            document.getElementById("Approved").style.display = "none";
+            document.getElementById("Rejected").style.display = "block";
+        }
+        function closePopup() {
+            document.getElementById("popup-container").style.display = "none";
+        }
     </script>
 
     <script src="/ProyectoFundamentos/js/services/patient_service.js"></script>
