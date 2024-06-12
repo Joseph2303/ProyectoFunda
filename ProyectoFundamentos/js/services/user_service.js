@@ -137,7 +137,8 @@ const fetchAPI = async (query, input) => {
         const result = await fetch(urlAPI, options);
         const data = await result.json();
         if (data.errors) {
-            mostrarMensajeDeError('Error, verifique sus datos')
+           // mostrarMensajeDeInfo('JAJAJAJAJ')
+            mostrarMensajeDeErrorr('Error, verifique sus datos')
             throw new Error(data.errors[0].message);
         }
         return data;

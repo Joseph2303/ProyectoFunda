@@ -156,7 +156,7 @@
             <td>${cita.date}</td>
             <td>${cita.hour}</td>
             <td>${cita.status}</td>
-            <td><input data-doctorId="${cita.doctor.id}" data-name="${cita.name}" data-date="${cita.date}" data-hour="${cita.hour}" data-id="${cita.id}" type="checkbox" class="action-checkbox" ${cita.status === 'Aceptado' || cita.status === 'Rechazado' ? 'disabled' : ''}></td>
+            <td><input data-doctorId="${cita.doctor.id}" data-name="${cita.name}" data-date="${cita.date}" data-hour="${cita.hour}" data-id="${cita.id}" type="checkbox" class="action-checkbox" ${cita.status === 'Aceptado' || cita.status === 'Rechazado' || cita.status === 'Pendiente'? 'disabled' : ''}></td>
             </tr>`;
                 $("#bodyTable").append(filaHTML);
             });

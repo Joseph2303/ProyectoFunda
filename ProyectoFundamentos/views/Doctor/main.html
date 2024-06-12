@@ -69,8 +69,8 @@
                 <td>${paciente}</td>    
                 <td>${cita.status}</td>        
                 <td>
-                        <button onclick="updateCita(event)" class="btn-aceptar" data-id="${cita.id}" data-patient-id="${cita.patient ? cita.patient.id : ''}" ${cita.status === 'Aceptado' || cita.status === 'Rechazado' ? 'disabled' : ''}>Aceptar</button>
-                        <button onclick="updateCita(event)" class="btn-rechazar" data-id="${cita.id}" data-patient-id="${cita.patient ? cita.patient.id : ''}" ${cita.status === 'Aceptado' || cita.status === 'Rechazado' ? 'disabled' : ''}>Rechazar</button>
+                        <button onclick="updateCita(event)" class="btn-aceptar" data-id="${cita.id}" data-patient-id="${cita.patient ? cita.patient.id : ''}" ${cita.status === 'Aceptado' || cita.status === 'Rechazado' || cita.status === 'Disponible' ? 'disabled' : ''}>Aceptar</button>
+                        <button onclick="updateCita(event)" class="btn-rechazar" data-id="${cita.id}" data-patient-id="${cita.patient ? cita.patient.id : ''}" ${cita.status === 'Aceptado' || cita.status === 'Rechazado' || cita.status === 'Disponible' ? 'disabled' : ''}>Rechazar</button>
                 </td>
                 </tr>`;
                 $("#bodyTable").append(filaHTML);
