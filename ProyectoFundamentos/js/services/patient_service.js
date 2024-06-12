@@ -284,8 +284,19 @@ const updateAppointment = async (id, patientId, status) => {
     `;
     const variables = {
         input: { id, patientId, status }
-    };
-    return await fetchAPI(query, variables);
+    };        try {
+        if (navigator.onLine) {
+        return await fetchAPI(query, variables);
+    } else {
+        const operation = { type: 'updateAppointment', payload: { id, patientId, status } };
+        await savePendingOperation(operation);
+        showNotification(`Operación pendiente guardada: ${JSON.stringify(operation)}`);
+        throw new Error('No hay conexión a Internet. La operación se realizará cuando haya conexión.');
+    }
+    } catch (error) {
+        showNotification(`Error al actualizar cita: ${error.message}`);
+        throw error;
+    }
 };
 
 
