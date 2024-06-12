@@ -32,6 +32,24 @@ if ('serviceWorker' in navigator && 'SyncManager' in window) {
 }
 
 
+const showNotification = (message) => {
+    // Comprobar si las notificaciones están disponibles en el navegador
+    if (!("Notification" in window)) {
+        console.error("Este navegador no soporta notificaciones");
+        return;
+    }
+    // Solicitar permiso para mostrar notificaciones si aún no se ha solicitado
+    if (Notification.permission !== "granted") {
+        Notification.requestPermission().then((permission) => {
+            if (permission === "granted") {
+                new Notification(message);
+            }
+        });
+    } else {
+        new Notification(message);
+    }
+};
+
 function notifications() {
     if (window.Notification) {
         if (Notification.permission === 'default') {
@@ -156,8 +174,8 @@ async function getDatesForms(event) {
 
 ///////////////////////
 //paciente
-
 async function updateCita(event) {
+
     event.preventDefault();
     const user = JSON.parse(localStorage.getItem('user'));
     let patientId = '';
@@ -169,6 +187,7 @@ async function updateCita(event) {
         const checkbox = document.querySelector('.action-checkbox:checked');
         if (!checkbox) {
             console.error('Error: Debe seleccionar una cita');
+            showNotification('Error: Debe seleccionar una cita');
             return;
         }
         citaId = checkbox.getAttribute('data-id');
@@ -179,6 +198,7 @@ async function updateCita(event) {
         patientId = btn.dataset.patientId;
         if (!patientId) {
             console.error('Error: No se pudo obtener el ID del paciente');
+            showNotification('Error: No se pudo obtener el ID del paciente');
             return;
         }
         if (event.target.id === "btn-acept") {
@@ -187,28 +207,28 @@ async function updateCita(event) {
             status = 'Rechazado';
         } else {
             console.error('Error: No se pudo determinar la acción (aceptar/rechazar)');
+            showNotification('Error: No se pudo determinar la acción (aceptar/rechazar)');
             return;
         }
     } else {
         console.error('Error: Rol de usuario no válido');
+        showNotification('Error: Rol de usuario no válido');
         return;
     }
 
     try {
         const updated = await updateAppointment(citaId, patientId, status);
         if (updated) {
-            alert(`Cita actualizada a ${status}`);
+            showNotification(`Cita actualizada a ${status}`);
             cargarTabla();
-            document.getElementById("myModal").style.display = "none";
         } else {
-            alert("Error al actualizar la cita");
+            showNotification("Error al actualizar la cita");
         }
-
     } catch (error) {
         console.error('Error :', error);
+        showNotification(`Error al actualizar cita: ${error.message}`);
     }
 }
-
 ///////////////////
 //cita
 async function getDoctores() {
@@ -277,6 +297,15 @@ const saveDataToCache = async (url, data) => {
     }
 };
 
+const getDataFromCache = async (url) => {
+    const CACHE_DYNAMIC_NAME = 'sw-pfw-dynamic-v1'; // Definir el nombre del caché aquí
+    const cache = await caches.open(CACHE_DYNAMIC_NAME);
+    const response = await cache.match(url);
+    if (!response) return null;
+    return response.json();
+};
+
+
 const getCachedData = async (url) => {
     const cachedData = localStorage.getItem(url);
     return cachedData ? JSON.parse(cachedData) : null;
@@ -303,11 +332,13 @@ const syncPendingOperations = async () => {
         const operations = getAndClearPendingOperations();
         console.log('Operaciones pendientes:', operations); // Agregar este console.log para ver las operaciones pendientes
         for (const operation of operations) {
-            if (operation.type === 'createUser') {
+            if (operation.type === 'updateAppointment') {
+                const { id, patientId, status } = operation.payload;
+                await updateAppointment(id, patientId, status);
+            }else if (operation.type === 'createUser') {
                 const { id, email, password, role } = operation.payload;
                 await createUser(id, email, password, role);
             }
-            // Agrega más lógica aquí para otros tipos de operaciones si es necesario
         }
         console.log('Operaciones pendientes sincronizadas con éxito');
     } catch (error) {
@@ -318,3 +349,4 @@ const syncPendingOperations = async () => {
 window.addEventListener('online', async () => {
     await syncPendingOperations();
 });
+

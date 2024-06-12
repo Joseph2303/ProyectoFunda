@@ -29,10 +29,10 @@ const getAppointment = async (limit) => {
                         hour
                         status
                         doctor {
-                            id
-                            name
-                            last_name
-                            cedula
+                         id
+                         name
+                         last_name
+                         cedula
                         }
                     }
                 }
