@@ -145,5 +145,5 @@ self.addEventListener('push', event => {
     console.log('Service Worker recibiendo push', event);
 });
 
-// eventos del create:
+
 

@@ -220,21 +220,3 @@ async function login(email, password) {
     }
 }
 
-const showNotification = (message) => {
-    // Comprobar si las notificaciones están disponibles en el navegador
-    if (!("Notification" in window)) {
-        console.error("Este navegador no soporta notificaciones");
-        return;
-    }
-
-    // Solicitar permiso para mostrar notificaciones si aún no se ha solicitado
-    if (Notification.permission !== "granted") {
-        Notification.requestPermission().then((permission) => {
-            if (permission === "granted") {
-                new Notification(message);
-            }
-        });
-    } else {
-        new Notification(message);
-    }
-};

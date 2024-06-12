@@ -166,10 +166,10 @@ const getAppointment = async (limit) => {
                         hour
                         status
                         doctor {
-                            id
-                            name
-                            last_name
-                            cedula
+                         id
+                         name
+                         last_name
+                         cedula
                         }
                     }
                 }
@@ -190,7 +190,7 @@ const getAppointment = async (limit) => {
 
         // Intentar obtener los datos del caché
         try {
-            const cachedData = await getCachedData(urlAPI + "/getCitas");
+            const cachedData = await getDataFromCache(urlAPI + "/getCitas");
             if (cachedData && cachedData.citas && cachedData.citas.items) {
                 console.log("Datos obtenidos del caché:", cachedData);
                 return cachedData.citas.items;
@@ -283,9 +283,20 @@ const updateAppointment = async (id, patientId, status) => {
         }
     `;
     const variables = {
-        input: {id,  patientId, status }
-    };
-    return await fetchAPI(query, variables);
+        input: { id, patientId, status }
+    };        try {
+        if (navigator.onLine) {
+        return await fetchAPI(query, variables);
+    } else {
+        const operation = { type: 'updateAppointment', payload: { id, patientId, status } };
+        await savePendingOperation(operation);
+        showNotification(`Operación pendiente guardada: ${JSON.stringify(operation)}`);
+        throw new Error('No hay conexión a Internet. La operación se realizará cuando haya conexión.');
+    }
+    } catch (error) {
+        showNotification(`Error al actualizar cita: ${error.message}`);
+        throw error;
+    }
 };
 
 
