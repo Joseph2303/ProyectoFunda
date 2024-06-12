@@ -340,6 +340,9 @@ const syncPendingOperations = async () => {
             }else if (operation.type === 'createUser') {
                 const { id, email, password, role } = operation.payload;
                 await createUser(id, email, password, role);
+            }else if (operation.type === 'createPaciente') {
+                const { name, last_name, age, cedula, gender, contact, userId  } = operation.payload;
+                await createPatient(name, last_name, age, cedula, gender, contact, userId);
             }
         }
         console.log('Operaciones pendientes sincronizadas con éxito');
